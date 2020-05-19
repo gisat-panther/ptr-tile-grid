@@ -15,7 +15,11 @@ const BASE_SIZE = 180;
 const getGridExtent = () => {
 	return [[...LEVEL_BOUNDARIES[0]], [...LEVEL_BOUNDARIES[1]]];
 }
+
+const EARTH_CIRCUIT = 40075000 //in meters
+
 export default {
 	getGridExtent,
 	BASE_SIZE,
+	LEVEL_BOUNDARIES,
 }
