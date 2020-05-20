@@ -46,14 +46,14 @@ export const closestDivisibleLower = (number, divisor) => {
 }
 
 /**
- * Snap given point to nearest left bottom node from grid defined by grid size.
- * If given point lies on right side of gridSet border
- * If result point overflow gridSet, then use nearest point on left/bottom.
+ * Return intersected tile for given point and grid size.
+ * If given point lies on top or  right side of gridSet border, return nearest tile from inside gridset.
+ * Point belongs to tile if lies on bottom or left border of tile.
  * @param {Array.<Longitude, Latitude>} point 
  * @param {Number} gridSize 
  * @returns {Array.<Longitude, Latitude>}
  */
-export const snapPointToGridLeftBottom = (point, gridSize) => {
+export const intersectTile = (point, gridSize) => {
     const lon = point[0];
     const lat = point[1];
 

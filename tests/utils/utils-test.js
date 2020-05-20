@@ -38,41 +38,41 @@ describe('utils/utils', function () {
         })
     })
 
-    describe('snapPointToGridLeftBottom', function () {
+    describe('intersectTile', function () {
         it('Snap given point to closest grid point on left bottom side.', function () {
             //poin inside tile
-            assert.deepEqual(utils.snapPointToGridLeftBottom([89, 89], 90), [0, 0]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([-91, -89], 45), [-135, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([0, -5], 180), [0, -90]);
+            assert.deepEqual(utils.intersectTile([89, 89], 90), [0, 0]);
+            assert.deepEqual(utils.intersectTile([-91, -89], 45), [-135, -90]);
+            assert.deepEqual(utils.intersectTile([0, -5], 180), [0, -90]);
             
             //point on node
-            assert.deepEqual(utils.snapPointToGridLeftBottom([90, 90], 90), [90, 0]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([-90, -90], 45), [-90, -90]);
+            assert.deepEqual(utils.intersectTile([90, 90], 90), [90, 0]);
+            assert.deepEqual(utils.intersectTile([-90, -90], 45), [-90, -90]);
             
             
             //point on gridSet node
                 //gridSide 90
-            assert.deepEqual(utils.snapPointToGridLeftBottom([-180, 90], 90), [-180, 0]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([180, 90], 90), [90, 0]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([180, -90], 90), [90, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([-180, -90], 90), [-180, -90]);
+            assert.deepEqual(utils.intersectTile([-180, 90], 90), [-180, 0]);
+            assert.deepEqual(utils.intersectTile([180, 90], 90), [90, 0]);
+            assert.deepEqual(utils.intersectTile([180, -90], 90), [90, -90]);
+            assert.deepEqual(utils.intersectTile([-180, -90], 90), [-180, -90]);
                 //gridSide 180
-            assert.deepEqual(utils.snapPointToGridLeftBottom([-180, 90], 180), [-180, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([180, 90], 180), [0, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([180, -90], 180), [0, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([-180, -90], 180), [-180, -90]);
+            assert.deepEqual(utils.intersectTile([-180, 90], 180), [-180, -90]);
+            assert.deepEqual(utils.intersectTile([180, 90], 180), [0, -90]);
+            assert.deepEqual(utils.intersectTile([180, -90], 180), [0, -90]);
+            assert.deepEqual(utils.intersectTile([-180, -90], 180), [-180, -90]);
             
 
             //point on border grid size 180
                 //latitude 0
-            assert.deepEqual(utils.snapPointToGridLeftBottom([-180, 0], 180), [-180, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([0, 0], 180), [0, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([180, 0], 180), [0, -90]);
+            assert.deepEqual(utils.intersectTile([-180, 0], 180), [-180, -90]);
+            assert.deepEqual(utils.intersectTile([0, 0], 180), [0, -90]);
+            assert.deepEqual(utils.intersectTile([180, 0], 180), [0, -90]);
             
                 //latitude -90
-            assert.deepEqual(utils.snapPointToGridLeftBottom([-180, -90], 180), [-180, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([0, -90], 180), [0, -90]);
-            assert.deepEqual(utils.snapPointToGridLeftBottom([180, -90], 180), [0, -90]);
+            assert.deepEqual(utils.intersectTile([-180, -90], 180), [-180, -90]);
+            assert.deepEqual(utils.intersectTile([0, -90], 180), [0, -90]);
+            assert.deepEqual(utils.intersectTile([180, -90], 180), [0, -90]);
             
         })
     })

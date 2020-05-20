@@ -6,9 +6,7 @@ import {
 } from './cache'
 import {
     getExtentID,
-    snapPointToGridLeftBottom,
-    convertLongitudeToColumn,
-    convertLatitudeToRow
+    intersectTile,
 } from './utils';
 
 const tileCache = createCache();
@@ -31,12 +29,12 @@ export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL
         const gridSize = getGridSizeForLevel(level);
         let grid = [];
 
-        const leftBottomSnappedPoint = snapPointToGridLeftBottom(extent[0], gridSize);
-        const rightTopSnappedPoint = snapPointToGridLeftBottom(extent[1], gridSize);
+        const leftBottomTile = intersectTile(extent[0], gridSize);
+        const rightTopTile = intersectTile(extent[1], gridSize);
 
-        for(let i = leftBottomSnappedPoint[1]; i <= rightTopSnappedPoint[1]; i+= gridSize){
+        for(let i = leftBottomTile[1]; i <= rightTopTile[1]; i+= gridSize){
             let row = [];
-            for(let j = leftBottomSnappedPoint[0]; j <= rightTopSnappedPoint[0]; j+= gridSize){
+            for(let j = leftBottomTile[0]; j <= rightTopTile[0]; j+= gridSize){
                 row = [...row, [j, i]];
             }
             grid = [row, ...grid];
