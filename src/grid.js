@@ -7,6 +7,7 @@ import {
 import {
     getExtentID,
     intersectTile,
+    checkExtentIntegrity,
 } from './utils';
 
 const tileCache = createCache();
@@ -18,6 +19,9 @@ const tileCache = createCache();
  * @return {Array.<Array.<Array.<Longitude, Latitude>>>} LevelTiles defined as array of rows. Each row contains Tiles.
  */
 export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL_BOUNDARIES) => {
+    //throw error if extent does not fit integrity check    
+    checkExtentIntegrity(extent);
+
     const extentId = getExtentID(extent);
     const intersectionId = `${level}-${extentId}`;
     if(tileCache.has(intersectionId)) {
@@ -32,10 +36,10 @@ export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL
         const leftBottomTile = intersectTile(extent[0], gridSize);
         const rightTopTile = intersectTile(extent[1], gridSize);
 
-        for(let i = leftBottomTile[1]; i <= rightTopTile[1]; i+= gridSize){
+        for(let tileLat = leftBottomTile[1]; tileLat <= rightTopTile[1]; tileLat+= gridSize){
             let row = [];
-            for(let j = leftBottomTile[0]; j <= rightTopTile[0]; j+= gridSize){
-                row = [...row, [j, i]];
+            for(let tileLon = leftBottomTile[0]; tileLon <= rightTopTile[0]; tileLon+= gridSize){
+                row = [...row, [tileLon, tileLat]];
             }
             grid = [row, ...grid];
         }

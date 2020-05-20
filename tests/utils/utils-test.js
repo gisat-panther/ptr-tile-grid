@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 import {
-    utils
+    utils,
+    constants,
 } from '../../src/';
 
 describe('utils/utils', function () {
@@ -74,6 +75,42 @@ describe('utils/utils', function () {
             assert.deepEqual(utils.intersectTile([0, -90], 180), [0, -90]);
             assert.deepEqual(utils.intersectTile([180, -90], 180), [0, -90]);
             
+        })
+    })
+
+    describe('containsXY', function () {
+        it('Check if point is inside extent', function () {
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [0,0]), true);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [180,0]), true);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [180,-90]), true);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [180,90]), true);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [-180,90]), true);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [-180,-90]), true);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [-179,-89]), true);
+            
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [180,-91]), false);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [181,-90]), false);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [-181,-90]), false);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [-360,-90]), false);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [180,90.1]), false);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [0,90.1]), false);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [0,-90.1]), false);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [180.1,0]), false);
+            assert.equal(utils.containsXY(constants.LEVEL_BOUNDARIES, [-180.1,0]), false);
+            
+        })
+    })
+
+    describe('containsExtent', function () {
+        it('Check if extent is inside extent', function () {
+            assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[0,0], [10,10]]), true);
+            assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[-180,-90], [180,90]]), true);
+            assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[-180,-90], [0,0]]), true);
+
+            assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[-180,-90], [180,91]]), false);
+            assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[-180,-90], [181,90]]), false);
+            assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[-180,-91], [180,90]]), false);
+            assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[-181,-90], [180,90]]), false);
         })
     })
 });

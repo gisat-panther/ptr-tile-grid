@@ -2,7 +2,7 @@
 
 import * as grid from './grid';
 import * as utils from './utils';
-import * as constants from './constants/grid';
+import constants from './constants/grid';
 
 export {
     grid,
