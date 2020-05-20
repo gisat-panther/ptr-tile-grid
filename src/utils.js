@@ -66,21 +66,3 @@ export const snapPointToGridLeftBottom = (point, gridSize) => {
     const snappedLatInside = snappedLat >= gridConstants.LEVEL_BOUNDARIES[1][1] ? snappedLat - gridSize : snappedLat;
     return [snappedLonInside, snappedLatInside];
 }
-
-/**
- * Returns row index for given latitude and gridSize.
- * @param {Number} latitude 
- * @param {Number} gridSize 
- */
-export const convertLatitudeToRow = (latitude, gridSize) => {
-    return (snapPointToGridLeftBottom([0, latitude], gridSize)[1] + 90) / gridSize;
-}
-
-/**
- * Returns column index
- * @param {Number} longitude 
- * @param {Number} gridSize 
- */
-export const convertLongitudeToColumn = (longitude, gridSize) => {
-    return (snapPointToGridLeftBottom([longitude, 0], gridSize)[0] + 180) / gridSize;
-}

@@ -76,36 +76,4 @@ describe('utils/utils', function () {
             
         })
     })
-
-    describe('convertLatitudeToRow', function () {
-        it('Convert given latitude to related row defined by grid size.', function () {
-            //grid size 90
-            assert.deepEqual(utils.convertLatitudeToRow(-90, 90), 0);
-            assert.deepEqual(utils.convertLatitudeToRow(0, 90), 1);
-            assert.deepEqual(utils.convertLatitudeToRow(90, 90), 1);
-            assert.deepEqual(utils.convertLatitudeToRow(-5, 90), 0);
-            
-            //grid size 45
-            assert.deepEqual(utils.convertLatitudeToRow(-90, 45), 0);
-            assert.deepEqual(utils.convertLatitudeToRow(0, 45), 2);
-            assert.deepEqual(utils.convertLatitudeToRow(90, 45), 3);
-            assert.deepEqual(utils.convertLatitudeToRow(-5, 45), 1);
-        })
-    })
-
-    describe('convertLongitudeToColumn', function () {
-        it('Convert given longitude to related column defined by grid size.', function () {
-            //grid size 90
-            assert.equal(utils.convertLongitudeToColumn(-180, 90), 0);
-            assert.equal(utils.convertLongitudeToColumn(-5, 90), 1);
-            assert.equal(utils.convertLongitudeToColumn(0, 90), 2);
-            assert.equal(utils.convertLongitudeToColumn(90, 90), 3);
-            
-            //grid size 45
-            assert.deepEqual(utils.convertLongitudeToColumn(-180, 45), 0);
-            assert.deepEqual(utils.convertLongitudeToColumn(-5, 45), 3);
-            assert.deepEqual(utils.convertLongitudeToColumn(0, 45), 4);
-            assert.deepEqual(utils.convertLongitudeToColumn(90, 45), 6);
-        })
-    })
 });

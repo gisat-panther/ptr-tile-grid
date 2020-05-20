@@ -30,21 +30,14 @@ export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL
     } else {
         const gridSize = getGridSizeForLevel(level);
         let grid = [];
-        const origin = getOrigin();
 
         const leftBottomSnappedPoint = snapPointToGridLeftBottom(extent[0], gridSize);
         const rightTopSnappedPoint = snapPointToGridLeftBottom(extent[1], gridSize);
-        
-        const rowsStartIndex = convertLatitudeToRow(leftBottomSnappedPoint[1], gridSize);
-        const rowsEndIndex = convertLatitudeToRow(rightTopSnappedPoint[1], gridSize);
-        
-        const columnsStartIndex = convertLongitudeToColumn(leftBottomSnappedPoint[0], gridSize);
-        const columnsEndIndex = convertLongitudeToColumn(rightTopSnappedPoint[0], gridSize);
 
-        for(let i = rowsStartIndex; i <= rowsEndIndex; i++){
+        for(let i = leftBottomSnappedPoint[1]; i <= rightTopSnappedPoint[1]; i+= gridSize){
             let row = [];
-            for(let j = columnsStartIndex; j <= columnsEndIndex; j++){
-                row = [...row, [origin[0] + (j * gridSize), origin[1] + (i * gridSize)]];
+            for(let j = leftBottomSnappedPoint[0]; j <= rightTopSnappedPoint[0]; j+= gridSize){
+                row = [...row, [j, i]];
             }
             grid = [row, ...grid];
         }
