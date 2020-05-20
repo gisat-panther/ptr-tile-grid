@@ -122,7 +122,7 @@ export const intersectTile = (point, gridSize) => {
       snappedLatInside = lat - gridSize;
     } else {
       //move lat to positive sector before call closestDivisibleLower
-      snappedLatInside = closestDivisibleLower(lat - 90, gridSize) + 90;
+      snappedLatInside = closestDivisibleLower(lat + 90, gridSize) - 90;
     }
 
     return [snappedLonInside, snappedLatInside];
