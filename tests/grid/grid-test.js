@@ -57,9 +57,8 @@ describe('grid/grid', function () {
 			]);
 
 			// //chceck if caching works
-			assert.deepEqual(grid0SecondInstance, [
-				[[-180,-90], [0,-90]]
-			]);
+			assert.equal(grid0SecondInstance === grid0, true);
+
 			assert.deepEqual(grid1, [
 				[[-180,0], [-90,0], [0,0], [90,0]],
 				[[-180,-90], [-90,-90], [0,-90], [90,-90]]

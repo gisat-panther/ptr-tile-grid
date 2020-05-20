@@ -1,23 +1,33 @@
 import gridConstants from './constants/grid'
 import {
+    createCache,
+    clearEntries,
+    placeEntryOnLastIndex,
+} from './cache'
+import {
     getExtentID,
     snapPointToGridLeftBottom,
     convertLongitudeToColumn,
     convertLatitudeToRow
 } from './utils';
 
-const tileCache = new Map();
+const tileCache = createCache();
 
 /**
  * Return grid for given level and extent. If no extent defined, global extend is used.
  * @param {Number} level Level between {0 - 26}
- * @param {Array.<Array>} extent Restricted extent. All tiles are intersecting given extent. Default extent is all globe. Extent is defined by left bottom and right top lon/lat.
+ * @param {Array.<Array>} extent Restricted extent. Default extent is all globe. Extent is defined by left bottom and right top lon/lat.
  * @return {Array.<Array.<Array.<Longitude, Latitude>>>} LevelTiles defined as array of rows. Each row contains Tiles.
  */
 export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL_BOUNDARIES) => {
     const extentId = getExtentID(extent);
     const intersectionId = `${level}-${extentId}`;
-    if(!tileCache.has(intersectionId)) {
+    if(tileCache.has(intersectionId)) {
+        //update usage in cache
+        placeEntryOnLastIndex(tileCache, intersectionId);
+        //for same level and extent return grid from cache
+        return tileCache.get(intersectionId);
+    } else {
         const gridSize = getGridSizeForLevel(level);
         let grid = [];
         const origin = getOrigin();
@@ -39,11 +49,11 @@ export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL
             grid = [row, ...grid];
         }
 
-        //consider cleaning cache 
-        tileCache.set(level, grid);
+        //keep cache size on max 1000 entries
+        clearEntries(tileCache, 1000);
+
+        tileCache.set(intersectionId, grid);
         return grid;
-    } else {
-        return tileCache.get(level);
     }
 }
 
