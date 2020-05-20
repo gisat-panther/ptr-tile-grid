@@ -57,12 +57,22 @@ export const intersectTile = (point, gridSize) => {
     const lon = point[0];
     const lat = point[1];
 
-    const snappedLon = closestDivisibleLower(lon , gridSize);
-    const snappedLonInside = snappedLon >= gridConstants.LEVEL_BOUNDARIES[1][0] ? snappedLon - gridSize : snappedLon;
-    
-    //move lat to positive sector before call closestDivisibleLower
-    let snappedLat = closestDivisibleLower(lat - 90, gridSize) + 90;
-    
-    const snappedLatInside = snappedLat >= gridConstants.LEVEL_BOUNDARIES[1][1] ? snappedLat - gridSize : snappedLat;
+    let snappedLonInside;
+    const pointLonOnTopBorder = lon === gridConstants.LEVEL_BOUNDARIES[1][0];
+    if(pointLonOnTopBorder) {
+      snappedLonInside = lon - gridSize;
+    } else {
+      snappedLonInside = closestDivisibleLower(lon , gridSize);
+    }
+
+    let snappedLatInside;
+    const pointLatOnTopBorder = lat === gridConstants.LEVEL_BOUNDARIES[1][1];
+    if(pointLatOnTopBorder) {
+      snappedLatInside = lat - gridSize;
+    } else {
+      //move lat to positive sector before call closestDivisibleLower
+      snappedLatInside = closestDivisibleLower(lat - 90, gridSize) + 90;
+    }
+
     return [snappedLonInside, snappedLatInside];
 }
