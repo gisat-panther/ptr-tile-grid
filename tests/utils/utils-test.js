@@ -13,13 +13,6 @@ describe('utils/utils', function () {
             
 		});
     });
-    
-    describe('roundNumber', function () {
-        it('Check correct number rounding', function () {
-            assert.equal(utils.roundNumber(1.1234, 2), 1.12);
-            assert.equal(utils.roundNumber(-1.1234324567897654, 15), -1.123432456789765);
-        })
-    })
 
     describe('closestDivisibleHigher', function () {
         it('Check correct number rounding', function () {

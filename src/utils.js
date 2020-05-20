@@ -10,25 +10,6 @@ export const getExtentID = (extent = gridConstants.LEVEL_BOUNDARIES) => {
 }
 
 /**
- * https://stackoverflow.com/questions/11832914/round-to-at-most-2-decimal-places-only-if-necessary?page=1&tab=votes#tab-top
- * @param {Number} num 
- * @param {Number} scale 
- * @returns {Number}
- */
-export const roundNumber = (num, scale) => {
-    if(!("" + num).includes("e")) {
-      return +(Math.round(num + "e+" + scale)  + "e-" + scale);
-    } else {
-      var arr = ("" + num).split("e");
-      var sig = ""
-      if(+arr[1] + scale > 0) {
-        sig = "+";
-      }
-      return +(Math.round(+arr[0] + "e" + sig + (+arr[1] + scale)) + "e-" + scale);
-    }
-  }
-
-/**
  * Returns closer divisible that is higher than given number,
  * @param {Number} number
  * @param {Number} divisor
