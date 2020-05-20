@@ -4,13 +4,11 @@ import multi from '@rollup/plugin-multi-entry';
 
 const env = process.env.NODE_ENV;
 
-const lodashExternal = ['lodash/isEmpty'];
+// const lodashExternal = ['lodash/isEmpty'];
 
 export default {
 	input: 'tests/**/*-test.js',
 	external: [
-		'prop-types',
-		'classnames',
 		'chai',
 		...lodashExternal,
 	],
@@ -26,7 +24,7 @@ export default {
 	plugins: [
 		multi(),
 		babel({
-			plugins: ['lodash'],
+			// plugins: ['lodash'],
 		}),
 		commonjs({
 			include: 'node_modules/**',
