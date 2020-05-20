@@ -59,7 +59,7 @@ export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL
 
 /**
  * Return size in degrees for certain level.
- * @param {Number} level Level between {0 - 26}
+ * @param {Number} level
  * @returns {Number} gridSize size in degrees
  */
 export const getGridSizeForLevel = (level = 0) => {
