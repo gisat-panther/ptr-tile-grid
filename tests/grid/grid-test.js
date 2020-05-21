@@ -1,25 +1,24 @@
 import {assert} from 'chai';
+
 import {
-	getSizeForLevel,
-	getGridForLevel,
-	getOrigin,
-} from '../../src/grid';
+	grid,
+} from '../../src/';
 
 describe('grid/grid', function () {
 	describe('createRenderFn', function () {
 		it('getSizeForLevels', function () {
 
-			const level0 = getSizeForLevel(0);
-			const level1 = getSizeForLevel(1);
-			const level2 = getSizeForLevel(2);
-			const level3 = getSizeForLevel(3);
-			const level4 = getSizeForLevel(4);
-			const level5 = getSizeForLevel(5);
-			const level6 = getSizeForLevel(6);
-			const level7 = getSizeForLevel(7);
-			const level8 = getSizeForLevel(8);
-			const level9 = getSizeForLevel(9);
-			const level10 = getSizeForLevel(10);
+			const level0 = grid.getGridSizeForLevel(0);
+			const level1 = grid.getGridSizeForLevel(1);
+			const level2 = grid.getGridSizeForLevel(2);
+			const level3 = grid.getGridSizeForLevel(3);
+			const level4 = grid.getGridSizeForLevel(4);
+			const level5 = grid.getGridSizeForLevel(5);
+			const level6 = grid.getGridSizeForLevel(6);
+			const level7 = grid.getGridSizeForLevel(7);
+			const level8 = grid.getGridSizeForLevel(8);
+			const level9 = grid.getGridSizeForLevel(9);
+			const level10 = grid.getGridSizeForLevel(10);
 
 			assert.equal(level0, 180);
 			assert.equal(level1, 90);
@@ -38,29 +37,28 @@ describe('grid/grid', function () {
 	describe('getOrigin', function () {
 		it('Origin of extent is [-180, -90]', function () {
 
-			const origin = getOrigin();
+			const origin = grid.getOrigin();
 
 			assert.deepEqual(origin, [-180,-90]);
 		});
 	});
 
-	describe('getGridForLevel', function () {
-		it('Returns grid for given level', function () {
+	describe('getGridForLevelAndExtent', function () {
+		it('Returns grid for given level by default extent', function () {
 
-			const grid0 = getGridForLevel(0);
-			const grid0SecondInstance = getGridForLevel(0);
-			const grid1 = getGridForLevel(1);
-			const grid2 = getGridForLevel(2);
+			const grid0 = grid.getGridForLevelAndExtent(0);
+			const grid0SecondInstance = grid.getGridForLevelAndExtent(0);
+			const grid1 = grid.getGridForLevelAndExtent(1);
+			const grid2 = grid.getGridForLevelAndExtent(2);
 			
 
 			assert.deepEqual(grid0, [
 				[[-180,-90], [0,-90]]
 			]);
 
-			//chceck if caching works
-			assert.deepEqual(grid0SecondInstance, [
-				[[-180,-90], [0,-90]]
-			]);
+			// //chceck if caching works
+			assert.equal(grid0SecondInstance === grid0, true);
+
 			assert.deepEqual(grid1, [
 				[[-180,0], [-90,0], [0,0], [90,0]],
 				[[-180,-90], [-90,-90], [0,-90], [90,-90]]
@@ -70,6 +68,28 @@ describe('grid/grid', function () {
 				[[-180,0], [-135,0], [-90,0], [-45,0], [0,0], [45,0], [90,0], [135,0]],
 				[[-180,-45], [-135,-45], [-90,-45], [-45,-45], [0,-45], [45,-45], [90,-45], [135,-45]],
 				[[-180,-90], [-135,-90], [-90,-90], [-45,-90], [0,-90], [45,-90], [90,-90], [135,-90]]
+			]);
+		});
+	});
+
+	describe('getGridForLevelAndExtent', function () {
+		it('Returns grid for given level and extent', function () {
+
+			const grid0 = grid.getGridForLevelAndExtent(0, [[-180,-90], [-1,90]]);
+			const grid1 = grid.getGridForLevelAndExtent(0, [[-180,-90], [0,90]]);
+			const grid2 = grid.getGridForLevelAndExtent(2, [[-10,-10], [10,10]]);
+			
+			assert.deepEqual(grid0, [
+				[[-180,-90]]
+			]);
+
+			assert.deepEqual(grid1, [
+				[[-180,-90],[0,-90]]
+			]);
+
+			assert.deepEqual(grid2, [
+				[[-45,0], [0,0]],
+				[[-45,-45], [0,-45]],
 			]);
 		});
 	});

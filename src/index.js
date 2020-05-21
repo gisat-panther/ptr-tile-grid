@@ -1,8 +1,11 @@
 // import configDefaults from './config/defaults';
-import {
-    getGridForLevel,
-} from './grid';
+
+import * as grid from './grid';
+import * as utils from './utils';
+import constants from './constants/grid';
 
 export {
-    getGridForLevel,
-}
+    grid,
+    utils,
+    constants,
+};

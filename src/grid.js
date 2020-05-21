@@ -1,49 +1,70 @@
 import gridConstants from './constants/grid'
+import {
+    createCache,
+    clearEntries,
+    placeEntryOnLastIndex,
+} from './cache'
+import {
+    getExtentID,
+    intersectTile,
+    checkExtentIntegrity,
+} from './utils';
 
-const tileCache = new Map();
+const tileCache = createCache();
 
 /**
- * 
+ * Return grid for given level and extent. If no extent defined, global extend is used.
  * @param {Number} level Level between {0 - 26}
+ * @param {Array.<Array>} extent Restricted extent. Default extent is all globe. Extent is defined by left bottom and right top lon/lat.
+ * @return {Array.<Array.<Array.<Longitude, Latitude>>>} LevelTiles defined as array of rows. Each row contains Tiles.
  */
-export const getGridForLevel = (level = 0) => {
-    if(!tileCache.has(level)) {
-        const size = getSizeForLevel(level);
-        const xSize = gridConstants.BASE_SIZE * 2;
-        const ySize = gridConstants.BASE_SIZE;
-        const rows = ySize / size;
-        const columns = xSize / size;
-        const grid = [];
-        const origin = getOrigin();
+export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL_BOUNDARIES) => {
+    //throw error if extent does not fit integrity check    
+    checkExtentIntegrity(extent);
 
-        for(let i = 0; i < rows; i++){
-            const row = [];
-            for(let j = 0; j < columns; j++){
-                row[j] = [origin[0] + (j * size), origin[1] + (i * size)];
-            }
-            grid[rows-i-1] = row;
-        }
-        tileCache.set(level, grid);
-        return grid;
+    const extentId = getExtentID(extent);
+    const intersectionId = `${level}-${extentId}`;
+    if(tileCache.has(intersectionId)) {
+        //update usage in cache
+        placeEntryOnLastIndex(tileCache, intersectionId);
+        //for same level and extent return grid from cache
+        return tileCache.get(intersectionId);
     } else {
-        return tileCache.get(level);
-    }
+        const gridSize = getGridSizeForLevel(level);
+        let grid = [];
 
+        const leftBottomTile = intersectTile(extent[0], gridSize);
+        const rightTopTile = intersectTile(extent[1], gridSize);
+
+        for(let tileLat = leftBottomTile[1]; tileLat <= rightTopTile[1]; tileLat+= gridSize){
+            let row = [];
+            for(let tileLon = leftBottomTile[0]; tileLon <= rightTopTile[0]; tileLon+= gridSize){
+                row = [...row, [tileLon, tileLat]];
+            }
+            grid = [row, ...grid];
+        }
+
+        //keep cache size on max 1000 entries
+        clearEntries(tileCache, 1000);
+
+        tileCache.set(intersectionId, grid);
+        return grid;
+    }
 }
 
 /**
  * Return size in degrees for certain level.
- * @param {Number} level Level between {0 - 26}
+ * @param {Number} level
+ * @returns {Number} gridSize size in degrees
  */
-export const getSizeForLevel = (level = 0) => {
+export const getGridSizeForLevel = (level = 0) => {
     return gridConstants.BASE_SIZE / Math.pow(2, level)
 }
 /**
  * 
- * @param {*} level 
+ * @returns {Array.<Longitude, Latitude>} Coordinates of global extent
  */
 export const getOrigin = () => {
     const extent = gridConstants.getGridExtent();
     return extent[0];
 }
-
