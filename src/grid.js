@@ -70,8 +70,8 @@ export const getOrigin = () => {
 }
 
 /**
- * Find nearest next level for given resolution.
- * @param {Number} resolution Size of pixel in meters
+ * Find nearest next (higher resolution) level for given resolution.
+ * @param {Number} resolution Size of pixel in meters (m/px)
  * @returns {Number} Related level
  */
 export const getLevelByResolution = (resolution) => {
@@ -90,7 +90,6 @@ export const getLevelByResolution = (resolution) => {
  * @returns {Number} Related level
  */
 export const getLevelByViewport = (boxRange, viewportRange) => {
-    const viewportResulution = boxRange / viewportRange;
-    return getLevelByResolution(viewportResulution);
+    const viewportResolution = boxRange / viewportRange;
+    return getLevelByResolution(viewportResolution);
 }
-

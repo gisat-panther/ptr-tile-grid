@@ -25,7 +25,7 @@ const LEVEL_0_TILE_SIZE = BASE_SIZE / 2;
 const PIXEL_TILE_SIZE = 250;
 
 //resolutions
-//Resolution is number of meters displayed inone pixel.
+//Resolution is number of meters displayed in one pixel (m/px).
 
 // Maximum resolution for level 0. Level 0 has two tiles of size 180° x 180°
 const maxResolution = EARTH_CIRCUIT / PIXEL_TILE_SIZE;
