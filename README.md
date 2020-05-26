@@ -46,7 +46,7 @@ const grid2 = grid.getGridForLevelAndExtent(2, [[-10,-10], [10, 10]]);
 ```
 
 ## Tile
-Tile is spherical square with same site size in degrees. Site size is same for all tiles in same level. Each tile is defined by left bootm longitude latitude.
+Tile is spherical square with same side size in degrees. Side size is same for all tiles in same level. Each tile is defined by left bottom (south west) corner longitude latitude.
 
 ```js
 import {
