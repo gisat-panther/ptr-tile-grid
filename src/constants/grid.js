@@ -25,11 +25,11 @@ const PIXEL_TILE_SIZE = 250;
 //Resolution is number of meters displayed in one pixel (m/px).
 
 // Maximum resolution on equator. 
-const maxResolution = EARTH_CIRCUIT / PIXEL_TILE_SIZE;
+const maxResolution = EARTH_CIRCUIT / PIXEL_TILE_SIZE / 2;
 const resolutions = []
 const levels = 25;
 for (let i = 0; i < levels; ++i) {
-	resolutions[i] = maxResolution / Math.pow(2, i + 1);
+	resolutions[i] = maxResolution / Math.pow(2, i);
 }
 
 export default {
