@@ -104,6 +104,15 @@ describe('grid/grid', function () {
 			
 			const level1 = grid.getLevelByViewport(50000000, 250);
 			assert.equal(level1, 0);
+			
+			const level2 = grid.getLevelByViewport(0.000001, 4000);
+			assert.equal(level2, 24);
+
+			const level3 = grid.getLevelByViewport(0.00000000000000001, 4000);
+			assert.equal(level3, 24);
+			
+			const level4 = grid.getLevelByViewport(5000000000000000000000, 4000);
+			assert.equal(level4, 0);
 		});
 	});
 
