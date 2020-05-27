@@ -1,6 +1,6 @@
 {
   "name": "@gisatcz/ptr-tile-grid",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha",
   "description": "Panther globe tile set",
   "keywords": [
     "panther",
@@ -18,11 +18,7 @@
     "type": "git",
     "url": "https://github.com/gisat-panther/ptr-tile-grid"
   },
-  "dependencies": {
-    "classnames": "2.2.6",
-    "lodash": "4.17.15",
-    "prop-types": "15.7.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.4",

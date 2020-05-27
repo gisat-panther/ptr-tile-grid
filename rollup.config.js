@@ -17,14 +17,12 @@ Object.assign(Paths, {
 })
 
 const lodashExternal = [
-  'lodash/isEmpty',
+  // 'lodash/isEmpty',
 ]
 
 export default {
   input: "src/index.js",
   external: [
-    'prop-types',
-    'classnames',
     ...lodashExternal
   ],
   output: {
@@ -41,7 +39,7 @@ export default {
   },
   plugins: [
     babel({
-      plugins: ["lodash"],
+      // plugins: ["lodash"],
     }),
     commonjs({
         include: 'node_modules/**',
