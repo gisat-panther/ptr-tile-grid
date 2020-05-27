@@ -68,3 +68,28 @@ export const getOrigin = () => {
     const extent = gridConstants.getGridExtent();
     return extent[0];
 }
+
+/**
+ * Find nearest next (higher resolution) level for given resolution.
+ * @param {Number} resolution Size of pixel in meters (m/px)
+ * @returns {Number} Related level
+ */
+export const getLevelByResolution = (resolution) => {
+    const prevLevelIndex = gridConstants.resolutions.findIndex((r) => resolution >= r);
+    if(prevLevelIndex === -1) {
+        return gridConstants.resolutions.length - 1;
+    } else {
+        return prevLevelIndex;
+    }
+}
+
+/**
+ * Find best fit level on given parameters.
+ * @param {Number} boxRange Size of visible map in meters
+ * @param {Number} viewportRange Minimal size of viewport in pixels
+ * @returns {Number} Related level
+ */
+export const getLevelByViewport = (boxRange, viewportRange) => {
+    const viewportResolution = boxRange / viewportRange;
+    return getLevelByResolution(viewportResolution);
+}

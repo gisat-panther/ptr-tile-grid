@@ -93,4 +93,41 @@ describe('grid/grid', function () {
 			]);
 		});
 	});
+
+	describe('getLevelByViewport', function () {
+		it('Returns related level by given boxRange and vieportRange', function () {
+			const boxRange = 240;
+			const viewport = 240;
+
+			const level0 = grid.getLevelByViewport(boxRange, viewport);
+			assert.equal(level0, 17);
+			
+			const level1 = grid.getLevelByViewport(50000000, 250);
+			assert.equal(level1, 0);
+			
+			const level2 = grid.getLevelByViewport(0.000001, 4000);
+			assert.equal(level2, 24);
+
+			const level3 = grid.getLevelByViewport(0.00000000000000001, 4000);
+			assert.equal(level3, 24);
+			
+			const level4 = grid.getLevelByViewport(5000000000000000000000, 4000);
+			assert.equal(level4, 0);
+		});
+	});
+
+	describe('getLevelByResolution', function () {
+		it('Returns related level by given resolution', function () {
+			const resolution0 = 100000; //higher than base resolution
+			const resolution1 = 50000; 
+			const resolution25 = 0.0000001; //lower than last 25th resolution
+
+			const level0 = grid.getLevelByResolution(resolution0);
+			assert.equal(level0, 0);
+			const level1 = grid.getLevelByResolution(resolution1);
+			assert.equal(level1, 1);
+			const level24 = grid.getLevelByResolution(resolution25);
+			assert.equal(level24, 24);
+		});
+	});
 });
