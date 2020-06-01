@@ -144,4 +144,81 @@ describe('utils/utils', function () {
             });
     });
 	
+
+    describe('forEachTile', function () {
+        it('Check if callback is executed on each tile with params', function () {
+            const tileSet = [
+				[[-180,-90], [0,-90]]
+            ]
+            let tilesCount = 0;
+            utils.forEachTile(tileSet, (tile, rowIndex, columnIndex) => {
+                ++tilesCount;
+            })
+            assert.equal(tilesCount, 2);
+        })
+    })
+
+    describe('getTileAsPolygon', function () {
+        it('Check if returned polygon is correct for given tile', function () {
+            const correctPolygon1 = {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [[[0,0],[0,90], [90,90], [90,0], [0,0]]]
+                }
+              };
+            const polygon1 = utils.getTileAsPolygon([0,0], 90);
+            assert.deepEqual(polygon1, correctPolygon1);
+        })
+        it('Check if getTileAsPolygon throw fail', function () {
+            assert.throws(() => utils.getTileAsPolygon([190,90], 90), Error, 'Point 190,90 does not lies in base extent.');
+        })
+    })
+
+    describe('intersects', function () {
+        it('Determinate if two extents intersects.', function () {
+            const extent1 = [[0,0], [10,10]];
+            const extent2 = [[0,0], [20,20]];
+            const extent3 = [[10,10], [20,20]];
+            const extent4 = [[15,15], [20,20]];
+            assert.deepEqual(utils.intersects(extent1, extent2), true);
+            assert.deepEqual(utils.intersects(extent2, extent1), true);
+            
+            assert.deepEqual(utils.intersects(extent1, extent3), true);
+            assert.deepEqual(utils.intersects(extent3, extent1), true);
+
+            //dont intersect
+            assert.deepEqual(utils.intersects(extent1, extent4), false);
+            assert.deepEqual(utils.intersects(extent4, extent1), false);
+        })
+    })
+
+    describe('getIntersection', function () {
+        it('Clip one extent by other', function () {
+            const extent1 = [[0,0], [10,10]];
+            const extent2 = [[0,0], [20,20]];
+            const extent3 = [[10,10], [20,20]];
+            const extent4 = [[15,15], [20,20]];
+            assert.deepEqual(utils.getIntersection(extent1, extent2), [[0,0], [10,10]]);
+            assert.deepEqual(utils.getIntersection(extent2, extent1), [[0,0], [10,10]]);
+            
+            assert.deepEqual(utils.getIntersection(extent1, extent3), [[ 10, 10 ], [ 10, 10 ] ]);
+            assert.deepEqual(utils.getIntersection(extent3, extent1), [[ 10, 10 ], [ 10, 10 ] ]);
+
+            //dont intersect
+            assert.deepEqual(utils.getIntersection(extent1, extent4), [[-Infinity, -Infinity], [Infinity, Infinity]]);
+            assert.deepEqual(utils.getIntersection(extent4, extent1), [[-Infinity, -Infinity], [Infinity, Infinity]]);
+            // assert.deepEqual(extent2, [[-180,-90], [180,90]]);
+        })
+    })
+
+    describe('getExtentAroundCoortinates', function () {
+        it('Check if callback is executed on each tile with params', function () {
+            const extent1 = utils.getExtentAroundCoortinates(250, 3, [0,0]);
+            const extent2 = utils.getExtentAroundCoortinates(2000, 3, [0,0]);
+            assert.deepEqual(extent1, [[-45,-45], [45,45]]);
+            assert.deepEqual(extent2, [[-180,-90], [180,90]]);
+        })
+    })
 });
