@@ -113,4 +113,35 @@ describe('utils/utils', function () {
             assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[-181,-90], [180,90]]), false);
         })
     })
+
+
+    describe('getGridSizeForLevel', function () {
+		    it('getSizeForLevels', function () {
+
+                const level0 = utils.getGridSizeForLevel(0);
+                const level1 = utils.getGridSizeForLevel(1);
+                const level2 = utils.getGridSizeForLevel(2);
+                const level3 = utils.getGridSizeForLevel(3);
+                const level4 = utils.getGridSizeForLevel(4);
+                const level5 = utils.getGridSizeForLevel(5);
+                const level6 = utils.getGridSizeForLevel(6);
+                const level7 = utils.getGridSizeForLevel(7);
+                const level8 = utils.getGridSizeForLevel(8);
+                const level9 = utils.getGridSizeForLevel(9);
+                const level10 = utils.getGridSizeForLevel(10);
+
+                assert.equal(level0, 180);
+                assert.equal(level1, 90);
+                assert.equal(level2, 45);
+                assert.equal(level3, 22.5);
+                assert.equal(level4, 11.25);
+                assert.equal(level5, 5.625);
+                assert.equal(level6, 2.8125);
+                assert.equal(level7, 1.40625);
+                assert.equal(level8, 0.703125);
+                assert.equal(level9, 0.3515625);
+                assert.equal(level10, 0.17578125);
+            });
+    });
+	
 });

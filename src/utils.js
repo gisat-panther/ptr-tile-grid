@@ -1,4 +1,5 @@
 import gridConstants from './constants/grid'
+import { constants } from '.';
 
 /**
  * 
@@ -126,4 +127,13 @@ export const intersectTile = (point, gridSize) => {
     }
 
     return [snappedLonInside, snappedLatInside];
+
+/**
+ * Return size in degrees for certain level.
+ * @param {Number} level
+ * @returns {Number} gridSize size in degrees
+ */
+export const getGridSizeForLevel = (level = 0) => {
+  return gridConstants.BASE_SIZE / Math.pow(2, level)
+}
 }

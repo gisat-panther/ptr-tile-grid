@@ -38,7 +38,7 @@ import {
     getSizeForLevel,
 } from './src/grid';
 
-const grid2 = grid.getGridForLevelAndExtent(2, [[-10,-10], [10, 10]]);
+const grid2 = utils.getGridForLevelAndExtent(2, [[-10,-10], [10, 10]]);
 // [
 //   [[-45,0], [0,0]],
 //   [[-45,-45], [0,-45]

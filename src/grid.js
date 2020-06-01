@@ -8,6 +8,7 @@ import {
     getExtentID,
     intersectTile,
     checkExtentIntegrity,
+    getGridSizeForLevel,
 } from './utils';
 
 const tileCache = createCache();
@@ -52,14 +53,6 @@ export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL
     }
 }
 
-/**
- * Return size in degrees for certain level.
- * @param {Number} level
- * @returns {Number} gridSize size in degrees
- */
-export const getGridSizeForLevel = (level = 0) => {
-    return gridConstants.BASE_SIZE / Math.pow(2, level)
-}
 /**
  * 
  * @returns {Array.<Longitude, Latitude>} Coordinates of global extent
