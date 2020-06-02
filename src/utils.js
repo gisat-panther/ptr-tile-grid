@@ -270,13 +270,13 @@ export const getIntersection = (extent1, extent2) => {
  * @param {Number} bufferCoefficient Multiply calculated visible distance by coefficient for ensure buffer around viewport.
  * @returns {Extent} Extent intersection
  */
-export const getExtentAroundCoortinates = (viewPortRange, level, coordinates, tileSizePX = gridConstants.PIXEL_TILE_SIZE, bufferCoefficient = 4) => {
+export const getExtentAroundCoordinates = (viewportRange, level, coordinates, tileSizePx = gridConstants.PIXEL_TILE_SIZE, bufferCoefficient = 4) => {
   //throw error if point does not fit integrity check
   checkPointIntegrity(coordinates);
 
   const gridSize = getGridSizeForLevel(level);
   
-  const visibleTiles = viewPortRange / tileSizePX;
+  const visibleTiles = viewportRange / tileSizePx;
   
   const distance = (visibleTiles * gridSize * bufferCoefficient) / 2;
   const extent = [[coordinates[0] - distance, coordinates[1] - distance], [coordinates[0] + distance, coordinates[1] + distance]];
