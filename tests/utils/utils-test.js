@@ -182,11 +182,15 @@ describe('utils/utils', function () {
             const extent2 = [[0,0], [20,20]];
             const extent3 = [[10,10], [20,20]];
             const extent4 = [[15,15], [20,20]];
+            const extent5 = [[5,5], [15,15]];
             assert.deepEqual(utils.intersects(extent1, extent2), true);
             assert.deepEqual(utils.intersects(extent2, extent1), true);
             
             assert.deepEqual(utils.intersects(extent1, extent3), true);
             assert.deepEqual(utils.intersects(extent3, extent1), true);
+            
+            assert.deepEqual(utils.intersects(extent3, extent5), true);
+            assert.deepEqual(utils.intersects(extent5, extent3), true);
 
             //dont intersect
             assert.deepEqual(utils.intersects(extent1, extent4), false);
