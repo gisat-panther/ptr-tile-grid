@@ -1,4 +1,5 @@
 import gridConstants from './constants/grid'
+import { constants } from '.';
 
 /**
  * 
@@ -81,7 +82,7 @@ const checkPointIntegrity = (point) => {
   if(containsXY(gridConstants.LEVEL_BOUNDARIES, point)) {
     return true
   } else {
-    throw `Point ${point} does not lies in base extent.`;
+    throw new Error(`Point ${point} does not lies in base extent.`);
   }
 }
 
@@ -126,4 +127,158 @@ export const intersectTile = (point, gridSize) => {
     }
 
     return [snappedLonInside, snappedLatInside];
+}
+
+/**
+ * Iterator for each tile in tileGrid.
+ * @param {Array.<Array.<Array.<Longitude, Latitude>>>} tileGrid LevelTiles defined as array of rows. Each row contains Tiles.
+ * @param {function} callback Called on each tile with parameters [tile, rowIndex, columnIndex].
+ */
+export const forEachTile = (tileGrid, callback) => {
+  for (let row = 0; row < tileGrid.length; row++) {
+    for (let column = 0; column < tileGrid[row].length; column++) {
+      callback(tileGrid[row][column], row, column)
+    }
+  }
+}
+
+/**
+ * Returns passed tile as polygon defined by array of nodes. Polygon is closed by last point same as first.
+ * @param {Array.<Longitude, Latitude>} tile 
+ * @param {Number} gridSize 
+ */
+export const getTileAsPolygon = (tile, gridSize) => {
+  checkPointIntegrity(tile);
+  const nodes = 5;
+  const coordsInner = new Array(nodes).fill(null);
+  const coordsInnerFill = coordsInner.map((v, i) => {
+    switch (i) {
+      case 0:
+        return [tile[0], tile[1]];
+      case 1:
+        return [tile[0], tile[1] + gridSize]
+      case 2:
+        return [tile[0] + gridSize, tile[1] + gridSize]
+      case 3:
+        return [tile[0] + gridSize, tile[1]]
+      case 4:
+        return [tile[0], tile[1]]
+    }
+  })
+
+
+  const feature = {
+    "type": "Feature",
+    "properties": {},
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [coordsInnerFill]
+    }
+  };
+  return feature;
+
+};
+
+
+/**
+ * Convert TileGrid to GeoJSON
+ * @param {Array.<Array.<Array.<Longitude, Latitude>>>} tileGrid LevelTiles defined as array of rows. Each row contains Tiles.
+ * @param {Number} gridSize 
+ * @returns {Array.<Array.<Longitude, Latitude>>} polygon
+ */
+export const getTileGridAsGeoJSON = (tileGrid, size) => {
+  const tilesPolygons = [];
+  forEachTile(tileGrid, (tile) => {
+    tilesPolygons.push(getTileAsPolygon(tile, size));
+  });
+  
+  return {
+    "type": "FeatureCollection",
+    "features": tilesPolygons
+  }
+}
+
+
+/**
+ * Return size in degrees for certain level.
+ * @param {Number} level
+ * @returns {Number} gridSize size in degrees
+ */
+export const getGridSizeForLevel = (level = 0) => {
+  return gridConstants.BASE_SIZE / Math.pow(2, level)
+}
+
+
+
+/**
+ * Determine if one extent intersects another.
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent.
+ * @return {boolean} The two extents intersect.
+ */
+export function intersects(extent1, extent2) {
+  return (extent1[0][0] <= extent2[1][0] &&
+      extent1[1][0] >= extent2[0][0] &&
+      extent1[0][1] <= extent2[1][1] &&
+      extent1[1][1] >= extent2[1][1]) || (extent2[0][0] <= extent1[1][0] &&
+        extent2[1][0] >= extent1[0][0] &&
+        extent2[0][1] <= extent1[1][1] &&
+        extent2[1][1] >= extent1[1][1]);
+}
+
+
+/**
+ * Clip extent by extent. Return extents intersection. Mostly used for clip overfloating extent LEVEL_BOUNDARIES.
+ * @param {Extent} extent1 Extent 1.
+ * @param {Extent} extent2 Extent 1.
+ * @returns {Extent} Extent intersection
+ */
+export const getIntersection = (extent1, extent2) => {
+  const intersection = [[-Infinity, -Infinity], [Infinity, Infinity]];
+  if (intersects(extent1, extent2)) {
+    if (extent1[0][0] > extent2[0][0]) {
+      intersection[0][0] = extent1[0][0];
+    } else {
+      intersection[0][0] = extent2[0][0];
+    }
+    if (extent1[0][1] > extent2[0][1]) {
+      intersection[0][1] = extent1[0][1];
+    } else {
+      intersection[0][1] = extent2[0][1];
+    }
+    if (extent1[1][0] < extent2[1][0]) {
+      intersection[1][0] = extent1[1][0];
+    } else {
+      intersection[1][0] = extent2[1][0];
+    }
+    if (extent1[1][1] < extent2[1][1]) {
+      intersection[1][1] = extent1[1][1];
+    } else {
+      intersection[1][1] = extent2[1][1];
+    }
+  };
+
+  return intersection;
+}
+
+/**
+ * 
+ * @param {Number} viewPortRange Size of requested viewPort in pixels
+ * @param {Number} level Requested map level
+ * @param {Array.<Longitude, Latitude>} coordinates Center coordinates of viewPort
+ * @param {Number?} tileSizePX Size of tile in pixels. If undefined, use gridConstants.PIXEL_TILE_SIZE.
+ * @param {Number} bufferCoefficient Multiply calculated visible distance by coefficient for ensure buffer around viewport.
+ * @returns {Extent} Extent intersection
+ */
+export const getExtentAroundCoordinates = (viewportRange, level, coordinates, tileSizePx = gridConstants.PIXEL_TILE_SIZE, bufferCoefficient = 4) => {
+  //throw error if point does not fit integrity check
+  checkPointIntegrity(coordinates);
+
+  const gridSize = getGridSizeForLevel(level);
+  
+  const visibleTiles = viewportRange / tileSizePx;
+  
+  const distance = (visibleTiles * gridSize * bufferCoefficient) / 2;
+  const extent = [[coordinates[0] - distance, coordinates[1] - distance], [coordinates[0] + distance, coordinates[1] + distance]];
+  return getIntersection(extent, constants.LEVEL_BOUNDARIES);
 }

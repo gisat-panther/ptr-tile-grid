@@ -36,5 +36,6 @@ export default {
 	getGridExtent,
 	BASE_SIZE,
 	LEVEL_BOUNDARIES,
+	PIXEL_TILE_SIZE,
 	resolutions,
 }

@@ -113,4 +113,116 @@ describe('utils/utils', function () {
             assert.equal(utils.containsExtent(constants.LEVEL_BOUNDARIES, [[-181,-90], [180,90]]), false);
         })
     })
+
+
+    describe('getGridSizeForLevel', function () {
+		    it('getSizeForLevels', function () {
+
+                const level0 = utils.getGridSizeForLevel(0);
+                const level1 = utils.getGridSizeForLevel(1);
+                const level2 = utils.getGridSizeForLevel(2);
+                const level3 = utils.getGridSizeForLevel(3);
+                const level4 = utils.getGridSizeForLevel(4);
+                const level5 = utils.getGridSizeForLevel(5);
+                const level6 = utils.getGridSizeForLevel(6);
+                const level7 = utils.getGridSizeForLevel(7);
+                const level8 = utils.getGridSizeForLevel(8);
+                const level9 = utils.getGridSizeForLevel(9);
+                const level10 = utils.getGridSizeForLevel(10);
+
+                assert.equal(level0, 180);
+                assert.equal(level1, 90);
+                assert.equal(level2, 45);
+                assert.equal(level3, 22.5);
+                assert.equal(level4, 11.25);
+                assert.equal(level5, 5.625);
+                assert.equal(level6, 2.8125);
+                assert.equal(level7, 1.40625);
+                assert.equal(level8, 0.703125);
+                assert.equal(level9, 0.3515625);
+                assert.equal(level10, 0.17578125);
+            });
+    });
+	
+
+    describe('forEachTile', function () {
+        it('Check if callback is executed on each tile with params', function () {
+            const tileSet = [
+				[[-180,-90], [0,-90]]
+            ]
+            let tilesCount = 0;
+            utils.forEachTile(tileSet, (tile, rowIndex, columnIndex) => {
+                ++tilesCount;
+            })
+            assert.equal(tilesCount, 2);
+        })
+    })
+
+    describe('getTileAsPolygon', function () {
+        it('Check if returned polygon is correct for given tile', function () {
+            const correctPolygon1 = {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [[[0,0],[0,90], [90,90], [90,0], [0,0]]]
+                }
+              };
+            const polygon1 = utils.getTileAsPolygon([0,0], 90);
+            assert.deepEqual(polygon1, correctPolygon1);
+        })
+        it('Check if getTileAsPolygon throw fail', function () {
+            assert.throws(() => utils.getTileAsPolygon([190,90], 90), Error, 'Point 190,90 does not lies in base extent.');
+        })
+    })
+
+    describe('intersects', function () {
+        it('Determinate if two extents intersects.', function () {
+            const extent1 = [[0,0], [10,10]];
+            const extent2 = [[0,0], [20,20]];
+            const extent3 = [[10,10], [20,20]];
+            const extent4 = [[15,15], [20,20]];
+            const extent5 = [[5,5], [15,15]];
+            assert.deepEqual(utils.intersects(extent1, extent2), true);
+            assert.deepEqual(utils.intersects(extent2, extent1), true);
+            
+            assert.deepEqual(utils.intersects(extent1, extent3), true);
+            assert.deepEqual(utils.intersects(extent3, extent1), true);
+            
+            assert.deepEqual(utils.intersects(extent3, extent5), true);
+            assert.deepEqual(utils.intersects(extent5, extent3), true);
+
+            //dont intersect
+            assert.deepEqual(utils.intersects(extent1, extent4), false);
+            assert.deepEqual(utils.intersects(extent4, extent1), false);
+        })
+    })
+
+    describe('getIntersection', function () {
+        it('Clip one extent by other', function () {
+            const extent1 = [[0,0], [10,10]];
+            const extent2 = [[0,0], [20,20]];
+            const extent3 = [[10,10], [20,20]];
+            const extent4 = [[15,15], [20,20]];
+            assert.deepEqual(utils.getIntersection(extent1, extent2), [[0,0], [10,10]]);
+            assert.deepEqual(utils.getIntersection(extent2, extent1), [[0,0], [10,10]]);
+            
+            assert.deepEqual(utils.getIntersection(extent1, extent3), [[ 10, 10 ], [ 10, 10 ] ]);
+            assert.deepEqual(utils.getIntersection(extent3, extent1), [[ 10, 10 ], [ 10, 10 ] ]);
+
+            //dont intersect
+            assert.deepEqual(utils.getIntersection(extent1, extent4), [[-Infinity, -Infinity], [Infinity, Infinity]]);
+            assert.deepEqual(utils.getIntersection(extent4, extent1), [[-Infinity, -Infinity], [Infinity, Infinity]]);
+            // assert.deepEqual(extent2, [[-180,-90], [180,90]]);
+        })
+    })
+
+    describe('getExtentAroundCoordinates', function () {
+        it('Check if callback is executed on each tile with params', function () {
+            const extent1 = utils.getExtentAroundCoordinates(250, 3, [0,0]);
+            const extent2 = utils.getExtentAroundCoordinates(2000, 3, [0,0]);
+            assert.deepEqual(extent1, [[-45,-45], [45,45]]);
+            assert.deepEqual(extent2, [[-180,-90], [180,90]]);
+        })
+    })
 });
