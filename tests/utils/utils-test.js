@@ -219,10 +219,12 @@ describe('utils/utils', function () {
 
     describe('getExtentAroundCoordinates', function () {
         it('Check if callback is executed on each tile with params', function () {
-            const extent1 = utils.getExtentAroundCoordinates(250, 3, [0,0]);
-            const extent2 = utils.getExtentAroundCoordinates(2000, 3, [0,0]);
-            assert.deepEqual(extent1, [[-45,-45], [45,45]]);
-            assert.deepEqual(extent2, [[-180,-90], [180,90]]);
+            const extent1 = utils.getExtentAroundCoordinates([0,0], 78271.51696402048, 1, 50, "L");
+            const extent2 = utils.getExtentAroundCoordinates([0,0], 78271.51696402048, 0.5, 50, "L");
+            const extent3 = utils.getExtentAroundCoordinates([0,0], 78271.51696402048, 0.5, 50, "P");
+            assert.deepEqual(extent1, [[-0.5475468511916786,-0.5475468511916786], [0.5475468511916786,0.5475468511916786]]);
+            assert.deepEqual(extent2, [[-1.0950937023833571,-0.5475468511916786], [1.0950937023833571,0.5475468511916786]]);
+            assert.deepEqual(extent3, [[-0.5475468511916786,-1.0950937023833571], [0.5475468511916786, 1.0950937023833571]]);
         })
     })
 });
