@@ -266,25 +266,24 @@ export const getIntersection = (extent1, extent2) => {
  * 
  * @param {Array.<Longitude, Latitude>} coordinates Center coordinates of viewPort
  * @param {Number} range Size of map in meters
- * @param {Number} optLat Optimized range for latitude. 
  * @param {Number} ratio Ratio between width and height
- * @param {string} layout [L/P] landscape/portrait
+ * @param {Number} optLat Optimized range for latitude. 
  * @returns {Extent} Extent intersection
  */
-export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat, layout) => {
+export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat) => {
   //throw error if point does not fit integrity check
   checkPointIntegrity(coordinates);
 
   //determinate landscape or portrait position of map
   let widthRatio = 1;
   let heightRatio = 1;
-  
-  if(layout === 'L') {
-    widthRatio = ratio;
-  }
-
-  if(layout === 'P') {
+  // let layout;
+  if(ratio < 1) {
+    // portrait layout
     heightRatio = ratio;
+  } else {
+    // landscape layout
+    widthRatio = 1/ratio;
   }
 
   const rangeOnEq = range / Math.cos(Math.PI * optLat / 180);
