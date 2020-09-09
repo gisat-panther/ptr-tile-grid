@@ -267,7 +267,7 @@ export const getIntersection = (extent1, extent2) => {
  * @param {Array.<Longitude, Latitude>} coordinates Center coordinates of viewPort
  * @param {Number} range Size of map in meters
  * @param {Number} ratio Ratio between width and height
- * @param {Number} optLat Optimized range for latitude. 
+ * @param {Number} optLat Selected latitude with minimized distortion.
  * @returns {Extent} Extent intersection
  */
 export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat) => {
