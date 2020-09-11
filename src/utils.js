@@ -1,5 +1,6 @@
 import gridConstants from './constants/grid'
 import { constants } from '.';
+import LatLon from './dmsHelpers';
 
 /**
  * 
@@ -263,22 +264,35 @@ export const getIntersection = (extent1, extent2) => {
 
 /**
  * 
- * @param {Number} viewPortRange Size of requested viewPort in pixels
- * @param {Number} level Requested map level
  * @param {Array.<Longitude, Latitude>} coordinates Center coordinates of viewPort
- * @param {Number?} tileSizePX Size of tile in pixels. If undefined, use gridConstants.PIXEL_TILE_SIZE.
- * @param {Number} bufferCoefficient Multiply calculated visible distance by coefficient for ensure buffer around viewport.
+ * @param {Number} range Size of map in meters
+ * @param {Number} ratio Ratio between width and height
+ * @param {Number} optLat Selected latitude with minimized distortion.
  * @returns {Extent} Extent intersection
  */
-export const getExtentAroundCoordinates = (viewportRange, level, coordinates, tileSizePx = gridConstants.PIXEL_TILE_SIZE, bufferCoefficient = 4) => {
+export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat) => {
   //throw error if point does not fit integrity check
   checkPointIntegrity(coordinates);
 
-  const gridSize = getGridSizeForLevel(level);
-  
-  const visibleTiles = viewportRange / tileSizePx;
-  
-  const distance = (visibleTiles * gridSize * bufferCoefficient) / 2;
-  const extent = [[coordinates[0] - distance, coordinates[1] - distance], [coordinates[0] + distance, coordinates[1] + distance]];
-  return getIntersection(extent, constants.LEVEL_BOUNDARIES);
+  //determinate landscape or portrait position of map
+  let widthRatio = 1;
+  let heightRatio = 1;
+  // let layout;
+  if(ratio < 1) {
+    // portrait layout
+    heightRatio = ratio;
+  } else {
+    // landscape layout
+    widthRatio = 1/ratio;
+  }
+
+  const rangeOnEq = range / Math.cos(Math.PI * optLat / 180);
+  const optRange = rangeOnEq * Math.cos(Math.PI * coordinates[1] / 180)
+  const centerLonLat = new LatLon(coordinates[1], coordinates[0]);
+  const northBorder = centerLonLat.destinationPoint((optRange / 2) / heightRatio, 0);
+  const southBorder = centerLonLat.destinationPoint((optRange / 2) / heightRatio, 180);
+  const westBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 270);
+  const eastBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 90);
+  const extent = [[westBorder.lon, southBorder.lat], [eastBorder.lon, northBorder.lat]];
+  return getIntersection(extent, constants.LEVEL_BOUNDARIES); 
 }
