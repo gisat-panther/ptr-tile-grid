@@ -1,14 +1,18 @@
+import {map as mapUtils} from '@gisatcz/ptr-utils';
+
 import gridConstants from './constants/grid'
 import {
     createCache,
     clearEntries,
     placeEntryOnLastIndex,
 } from './cache'
+
 import {
     getExtentID,
     intersectTile,
     checkExtentIntegrity,
     getGridSizeForLevel,
+    getExtentAroundCoordinates,
 } from './utils';
 
 const tileCache = createCache();
@@ -86,3 +90,21 @@ export const getLevelByViewport = (boxRange, viewportRange) => {
     const viewportResolution = boxRange / viewportRange;
     return getLevelByResolution(viewportResolution);
 }
+
+/**
+ * 
+ * @param {number} width 
+ * @param {number} height 
+ * @param {number} boxRange 
+ * @param {Array.<number, number>} center [lon, lat]
+ */
+export const getTileGrid = (width, height, boxRange, center) => {
+    const viewportRange = mapUtils.view.getMapViewportRange(width, height);
+    const zoom = mapUtils.view.getZoomLevelFromBoxRange(boxRange, width, height);
+    const boxRangeByZoomLevel = mapUtils.view.getBoxRangeFromZoomLevel(zoom, width, height);
+    const level = getLevelByViewport(boxRange, viewportRange);
+    const ratio =  width / height;
+    const extent = getExtentAroundCoordinates(center, boxRangeByZoomLevel, ratio, 50);
+    const tileGrid = getGridForLevelAndExtent(level, extent);
+    return tileGrid;
+  }
