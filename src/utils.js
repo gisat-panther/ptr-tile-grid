@@ -1,5 +1,4 @@
 import gridConstants from './constants/grid'
-import { constants } from '.';
 import LatLon from './dmsHelpers';
 
 /**
@@ -354,7 +353,7 @@ export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat, fi
   const westBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 270);
   const eastBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 90);
   const extent = [[westBorder.lon, southBorder.lat], [eastBorder.lon, northBorder.lat]];
-  const intersectedExtent = getIntersection(extent, constants.LEVEL_BOUNDARIES); 
+  const intersectedExtent = getIntersection(extent, gridConstants.LEVEL_BOUNDARIES); 
   if(fixIntegrity) {
     return ensureExtentIntegrity(intersectedExtent);
   } else {
