@@ -11,6 +11,7 @@ import {
     getExtentID,
     intersectTile,
     checkExtentIntegrity,
+    ensureExtentIntegrity,
     getGridSizeForLevel,
     getExtentAroundCoordinates,
 } from './utils';
@@ -23,9 +24,18 @@ const tileCache = createCache();
  * @param {Array.<Array>} extent Restricted extent. Default extent is all globe. Extent is defined by left bottom and right top lon/lat.
  * @return {Array.<Array.<Array.<Longitude, Latitude>>>} LevelTiles defined as array of rows. Each row contains Tiles.
  */
-export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL_BOUNDARIES) => {
+export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL_BOUNDARIES, fixIntegrity) => {
     //throw error if extent does not fit integrity check    
-    checkExtentIntegrity(extent);
+    try {
+        checkExtentIntegrity(extent);
+      } catch (error) {
+        if(fixIntegrity) {
+            extent = ensureExtentIntegrity(extent);
+        } else {
+            throw error;
+        }
+      }
+    
 
     const extentId = getExtentID(extent);
     const intersectionId = `${level}-${extentId}`;
@@ -38,14 +48,27 @@ export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL
         const gridSize = getGridSizeForLevel(level);
         let grid = [];
 
-        const leftBottomTile = intersectTile(extent[0], gridSize);
-        const rightTopTile = intersectTile(extent[1], gridSize);
-
+        const leftBottomTile = intersectTile(extent[0], gridSize, fixIntegrity);
+        const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity);
         for(let tileLat = leftBottomTile[1]; tileLat <= rightTopTile[1]; tileLat+= gridSize){
             let row = [];
-            for(let tileLon = leftBottomTile[0]; tileLon <= rightTopTile[0]; tileLon+= gridSize){
-                row = [...row, [tileLon, tileLat]];
+            const crossMeridian = (rightTopTile[0] - leftBottomTile[0]) <= -180;
+            if (crossMeridian) {
+                //generate tile to meridian
+                for(let tileLon = leftBottomTile[0]; tileLon+gridSize <= 180; tileLon+= gridSize) {
+                    row = [...row, [tileLon, tileLat]];
+                }
+                //generate tile from meridian
+                for(let tileLon = -180; tileLon <= rightTopTile[0]; tileLon+= gridSize) {
+                    row = [...row, [tileLon, tileLat]];
+                }
+            } else {
+                for(let tileLon = leftBottomTile[0]; tileLon <= rightTopTile[0]; tileLon+= gridSize){
+                    row = [...row, [tileLon, tileLat]];
+                }
             }
+
+
             grid = [row, ...grid];
         }
 
@@ -98,13 +121,13 @@ export const getLevelByViewport = (boxRange, viewportRange) => {
  * @param {number} boxRange 
  * @param {Array.<number, number>} center [lon, lat]
  */
-export const getTileGrid = (width, height, boxRange, center) => {
+export const getTileGrid = (width, height, boxRange, center, fixIntegrity) => {
     const viewportRange = mapUtils.view.getMapViewportRange(width, height);
     const zoom = mapUtils.view.getZoomLevelFromBoxRange(boxRange, width, height);
     const boxRangeByZoomLevel = mapUtils.view.getBoxRangeFromZoomLevel(zoom, width, height);
     const level = getLevelByViewport(boxRange, viewportRange);
     const ratio =  width / height;
-    const extent = getExtentAroundCoordinates(center, boxRangeByZoomLevel, ratio, 50);
-    const tileGrid = getGridForLevelAndExtent(level, extent);
+    const extent = getExtentAroundCoordinates(center, boxRangeByZoomLevel, ratio, 50, fixIntegrity);
+    const tileGrid = getGridForLevelAndExtent(level, extent, fixIntegrity);
     return tileGrid;
   }

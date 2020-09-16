@@ -79,7 +79,38 @@ export const containsExtent = (extent1, extent2) => {
   );
 }
 
-const checkPointIntegrity = (point) => {
+export const ensurePointIntegrity = (point) => {
+  if (point) {
+    if (point[1]) {
+      if (point[1]> 90) {
+        point[1]= 90;
+      } else if (point[1]< -90) {
+        point[1]= -90;
+      }
+    }
+
+    if (point[0]) {
+      if (point[0] > 360 || point[0] < -360) {
+        point[0] %= 360;
+      }
+
+      if (point[0] > 180) {
+        point[0] = -180 + (point[0] - 180);
+      } else if (point[0] < -180) {
+        point[0] = 180 + (point[0] + 180);
+      } else if (point[0] === -180) {
+        point[0] = 180;
+      }
+    }
+  }
+  return point;
+}
+
+export const ensureExtentIntegrity = (extent) => {
+  return extent.map(ensurePointIntegrity);
+}
+
+export const checkPointIntegrity = (point) => {
   if(containsXY(gridConstants.LEVEL_BOUNDARIES, point)) {
     return true
   } else {
@@ -104,9 +135,18 @@ export const checkExtentIntegrity = (extent) => {
  * @param {Number} gridSize 
  * @returns {Array.<Longitude, Latitude>}
  */
-export const intersectTile = (point, gridSize) => {
+export const intersectTile = (point, gridSize, fixIntegrity) => {
     //throw error if point does not fit integrity check
-    checkPointIntegrity(point);
+    try {
+      checkPointIntegrity(point);
+    } catch (error) {
+      if(fixIntegrity) {
+        point = ensurePointIntegrity(point);
+      } else {
+        throw error;
+      }
+    }
+
     const lon = point[0];
     const lat = point[1];
 
@@ -148,8 +188,17 @@ export const forEachTile = (tileGrid, callback) => {
  * @param {Array.<Longitude, Latitude>} tile 
  * @param {Number} gridSize 
  */
-export const getTileAsPolygon = (tile, gridSize) => {
-  checkPointIntegrity(tile);
+export const getTileAsPolygon = (tile, gridSize, fixIntegrity) => {
+  try {
+    checkPointIntegrity(tile, fixIntegrity);
+  } catch (error) {
+    if(fixIntegrity) {
+      tile = ensurePointIntegrity(tile);
+    } else {
+      throw error;
+    }
+  }
+
   const nodes = 5;
   const coordsInner = new Array(nodes).fill(null);
   const coordsInnerFill = coordsInner.map((v, i) => {
@@ -187,10 +236,10 @@ export const getTileAsPolygon = (tile, gridSize) => {
  * @param {Number} gridSize 
  * @returns {Array.<Array.<Longitude, Latitude>>} polygon
  */
-export const getTileGridAsGeoJSON = (tileGrid, size) => {
+export const getTileGridAsGeoJSON = (tileGrid, size, fixIntegrity) => {
   const tilesPolygons = [];
   forEachTile(tileGrid, (tile) => {
-    tilesPolygons.push(getTileAsPolygon(tile, size));
+    tilesPolygons.push(getTileAsPolygon(tile, size, fixIntegrity));
   });
   
   return {
@@ -270,9 +319,20 @@ export const getIntersection = (extent1, extent2) => {
  * @param {Number} optLat Selected latitude with minimized distortion.
  * @returns {Extent} Extent intersection
  */
-export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat) => {
+export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat, fixIntegrity) => {
   //throw error if point does not fit integrity check
-  checkPointIntegrity(coordinates);
+  //TODO -> if lon/lat higher than earth extent, then transform to extent
+  try {
+    checkPointIntegrity(coordinates);
+  } catch (error) {
+    if(fixIntegrity) {
+      coordinates = ensurePointIntegrity(coordinates);
+    } else {
+      throw error;
+    }
+  }
+
+  //todo fix point
 
   //determinate landscape or portrait position of map
   let widthRatio = 1;
@@ -294,5 +354,10 @@ export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat) =>
   const westBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 270);
   const eastBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 90);
   const extent = [[westBorder.lon, southBorder.lat], [eastBorder.lon, northBorder.lat]];
-  return getIntersection(extent, constants.LEVEL_BOUNDARIES); 
+  const intersectedExtent = getIntersection(extent, constants.LEVEL_BOUNDARIES); 
+  if(fixIntegrity) {
+    return ensureExtentIntegrity(intersectedExtent);
+  } else {
+    return intersectedExtent;
+  }
 }

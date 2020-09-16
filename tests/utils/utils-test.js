@@ -76,6 +76,10 @@ describe('utils/utils', function () {
             assert.deepEqual(utils.intersectTile([180, -90], 180), [0, -90]);
             
         })
+
+        it('Throw error, coordinates does not lies in extent', function () {
+            assert.throws(() => utils.intersectTile([185, -90], 180), Error, 'Point 185,-90 does not lies in base extent.');
+        })
     })
 
     describe('containsXY', function () {
@@ -218,6 +222,24 @@ describe('utils/utils', function () {
     })
 
     describe('getExtentAroundCoordinates', function () {
+        it('Returns extent', function () {
+            const extent1 = utils.getExtentAroundCoordinates([-179,89], 78271.51696402048, 1, 50);
+            assert.deepEqual(extent1, [[-179.54753018865017, 88.99044398980956], [-178.45246981134983, 89.00955601019021]]);
+        });
+
+        it('Fix extent and returns extent', function () {
+            const extent2 = utils.getExtentAroundCoordinates([-179,50], 20000000, 1, 50);
+            assert.deepEqual(extent2, [[91.04360634295034, -39.93216059187305], [-89.0436063429504, 40.06783940812695]]);
+            
+            const extent1 = utils.getExtentAroundCoordinates([-181,50], 20000000, 1, 50, true);
+            assert.deepEqual(extent1, [[89.0436063429504, -39.93216059187305], [-91.0436063429504, 40.06783940812695]]);
+        });
+
+        it('Throw error, coordinates does not lies in extent', function () {
+            assert.throws(() => utils.getExtentAroundCoordinates([200,100], 78271.51696402048, 0.5, 50), Error, 'Point 200,100 does not lies in base extent.');
+            assert.throws(() => utils.getExtentAroundCoordinates([-200,-100], 78271.51696402048, 0.5, 50), Error, 'Point -200,-100 does not lies in base extent.');
+        });
+
         it('Check if callback is executed on each tile with params', function () {
             const extent1 = utils.getExtentAroundCoordinates([0,0], 78271.51696402048, 1, 50);
             const extent2 = utils.getExtentAroundCoordinates([0,0], 78271.51696402048, 2, 50);
@@ -225,6 +247,48 @@ describe('utils/utils', function () {
             assert.deepEqual(extent1, [[-0.5475468511916786,-0.5475468511916786], [0.5475468511916786,0.5475468511916786]]);
             assert.deepEqual(extent2, [[-1.0950937023833571,-0.5475468511916786], [1.0950937023833571,0.5475468511916786]]);
             assert.deepEqual(extent3, [[-0.5475468511916786,-1.0950937023833571], [0.5475468511916786, 1.0950937023833571]]);
+            assert.deepEqual(extent3, [[-0.5475468511916786,-1.0950937023833571], [0.5475468511916786, 1.0950937023833571]]);
         })
     })
 });
+
+
+
+describe('checkPointIntegrity', function () {
+    it('Throw error', function () {
+        assert.throws(() => utils.checkPointIntegrity([190,90]), Error, 'Point 190,90 does not lies in base extent.');
+        assert.throws(() => utils.checkPointIntegrity([-190,90]), Error, 'Point -190,90 does not lies in base extent.');
+        assert.throws(() => utils.checkPointIntegrity([90,200]), Error, 'Point 90,200 does not lies in base extent.');
+        assert.throws(() => utils.checkPointIntegrity([90,-200]), Error, 'Point 90,-200 does not lies in base extent.');
+    })
+
+    it('Does not throw error', function () {
+        assert.equal(utils.checkPointIntegrity([180,90]), true);
+        assert.equal(utils.checkPointIntegrity([-180,-90]), true);
+        assert.equal(utils.checkPointIntegrity([-179,-90]), true);
+        assert.equal(utils.checkPointIntegrity([0,0]), true);
+    })
+})
+
+describe('ensurePointIntegrity', function () {
+    it('Fix point coords', function () {
+        assert.deepEqual(utils.ensurePointIntegrity([190,150]), [-170,90]);
+        assert.deepEqual(utils.ensurePointIntegrity([190,100]), [-170,90]);
+        assert.deepEqual(utils.ensurePointIntegrity([-195,-300]), [165,-90]);
+    })
+
+    it('Keep point coords untouched', function () {
+        assert.deepEqual(utils.ensurePointIntegrity([180,90]), [180,90]);
+        assert.deepEqual(utils.ensurePointIntegrity([-170,0]), [-170,0]);
+        assert.deepEqual(utils.ensurePointIntegrity([-19,-30]), [-19,-30]);
+    })
+})
+
+describe('ensureExtentIntegrity', function () {
+    it('Fix extent coords', function () {
+        assert.deepEqual(utils.ensureExtentIntegrity([[190,-150],[-190,150]]), [[-170,-90], [170,90]]);
+    })
+    it('Keep extent coords untouched', function () {
+        assert.deepEqual(utils.ensureExtentIntegrity([[-90,-15],[19,15]]), [[-90,-15], [19,15]]);
+    })
+})
