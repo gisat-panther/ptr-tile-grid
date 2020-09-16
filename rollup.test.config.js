@@ -13,6 +13,7 @@ export default {
 	external: [
 		'chai',
 		...lodashExternal,
+		'@gisatcz/ptr-utils',
 	],
 	output: {
 		file: 'build/bundle-tests.js',

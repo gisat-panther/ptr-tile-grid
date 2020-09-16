@@ -23,7 +23,8 @@ const lodashExternal = [
 export default {
   input: "src/index.js",
   external: [
-    ...lodashExternal
+    ...lodashExternal,
+    '@gisatcz/ptr-utils',
   ],
   output: {
     file: {
