@@ -352,11 +352,25 @@ export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat, fi
   const southBorder = centerLonLat.destinationPoint((optRange / 2) / heightRatio, 180);
   const westBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 270);
   const eastBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 90);
-  const extent = [[westBorder.lon, southBorder.lat], [eastBorder.lon, northBorder.lat]];
+  const extent = [[cropBorderByLimit(coordinates[0], westBorder.lon, -180), cropBorderByLimit(coordinates[1], southBorder.lat, -90)], [cropBorderByLimit(coordinates[0], eastBorder.lon, 180), cropBorderByLimit(coordinates[1],northBorder.lat, 90)]];
   const intersectedExtent = getIntersection(extent, gridConstants.LEVEL_BOUNDARIES); 
   if(fixIntegrity) {
     return ensureExtentIntegrity(intersectedExtent);
   } else {
     return intersectedExtent;
+  }
+}
+
+/**
+ * Check if endValue don`t overfloat limit value
+ * @param {Number} beginValue 
+ * @param {Number} endValue 
+ * @param {Number} limit 
+ */
+function cropBorderByLimit (beginValue, endValue, limit) {
+  if(((limit < endValue) &&(endValue < beginValue)) || ((beginValue < endValue) && (endValue < limit))) {
+    return endValue
+  } else {
+    return limit;
   }
 }
