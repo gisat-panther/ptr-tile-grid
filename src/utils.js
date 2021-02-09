@@ -332,16 +332,18 @@ const getExtentAroundCoordinatesHelper = (center, northLat, southLat, heightRati
   const southBorder = centerLonLat.destinationPoint((avarageSouthRange / 2) / heightRatio, 180);
   const westBorderNorth = northBorder.destinationPoint((northRange / 2) / widthRatio, 270);
   const westBorderSouth = southBorder.destinationPoint((southRange / 2) / widthRatio, 270);
+  const westBorderCenter = centerLonLat.destinationPoint((centerRange / 2) / widthRatio, 270);
   const eastBorderNorth = northBorder.destinationPoint((northRange / 2) / widthRatio, 90);
   const eastBorderSouth = southBorder.destinationPoint((southRange / 2) / widthRatio, 90);
+  const eastBorderCenter = centerLonLat.destinationPoint((centerRange / 2) / widthRatio, 90);
 
   const extent = [
     [
-      cropBorderByLimit(center[0], getLowest(center[0], cropBorderByLimit(center[0], westBorderNorth.lon, -180), cropBorderByLimit(center[0],westBorderSouth.lon, -180)), -180),
+      cropBorderByLimit(center[0], getLowest(center[0], cropBorderByLimit(center[0], westBorderNorth.lon, -180), cropBorderByLimit(center[0],westBorderSouth.lon, -180), cropBorderByLimit(center[0],westBorderCenter.lon, -180)), -180),
       cropBorderByLimit(center[1], southBorder.lat, -90)
     ],
     [
-      cropBorderByLimit(center[0], getHighest(center[0], cropBorderByLimit(center[0], eastBorderNorth.lon,180), cropBorderByLimit(center[0], eastBorderSouth.lon,180)), 180),
+      cropBorderByLimit(center[0], getHighest(center[0], cropBorderByLimit(center[0], eastBorderNorth.lon,180), cropBorderByLimit(center[0], eastBorderSouth.lon,180), cropBorderByLimit(center[0], eastBorderCenter.lon,180)), 180),
       cropBorderByLimit(center[1],northBorder.lat, 90)
     ]
   ];
@@ -419,10 +421,10 @@ function cropBorderByLimit (beginValue, endValue, limit) {
  * @param {Number} endValue 
  * @param {Number} limit 
  */
-function getHighest (valueOne, valueTwo, valueThree) {
-  const values = [valueOne, valueTwo, valueThree];
+function getHighest (...args) {
+  const values = [...args];
   values.sort((a,b) => a - b);
-  return values[2];
+  return values[values.length-1];
 }
 
 /**
@@ -431,8 +433,8 @@ function getHighest (valueOne, valueTwo, valueThree) {
  * @param {Number} endValue 
  * @param {Number} limit 
  */
-function getLowest (valueOne, valueTwo, valueThree) {
-  const values = [valueOne, valueTwo, valueThree];
+function getLowest (...args) {
+  const values = [...args];
   values.sort((a,b) => a - b);
   return values[0];
 }
