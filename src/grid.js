@@ -123,6 +123,8 @@ export const getLevelByViewport = (boxRange, viewportRange) => {
  */
 export const getTileGrid = (width, height, boxRange, center, fixIntegrity) => {
     const viewportRange = mapUtils.view.getMapViewportRange(width, height);
+
+    //map zoom from zoom levels generated for lat 50
     const zoom = mapUtils.view.getZoomLevelFromBoxRange(boxRange, width, height);
     const boxRangeByZoomLevel = mapUtils.view.getBoxRangeFromZoomLevel(zoom, width, height);
     const level = getLevelByViewport(boxRange, viewportRange);

@@ -98,7 +98,8 @@ export const ensurePointIntegrity = (point) => {
       } else if (point[0] < -180) {
         point[0] = 180 + (point[0] + 180);
       } else if (point[0] === -180) {
-        point[0] = 180;
+        // Is -180 acceptable?, it replace 180 which causes errors
+        point[0] = -180;
       }
     }
   }
@@ -312,10 +313,54 @@ export const getIntersection = (extent1, extent2) => {
 
 /**
  * 
+ * @param {Array.<Longitude, Latitude>} center Center coordinates of viewPort
+ * @param {Number} northLat Latitude of north border for more precize result. Could be same as center latitude
+ * @param {Number} southLat Latitude of south border for more precize result . Could be same as center latitude
+ * @param {Number} heightRatio Height ratio of map window
+ * @param {Number} widthRatio Width ratio of map window
+ * @param {Number} centerRange Range in meters in center coordinates
+ * @param {Number} rangeOnEq Range in meters on equathor
+ * @param {bool} fixIntegrity Keep results in BBOX [-180,-90],[180,90]
+ */
+const getExtentAroundCoordinatesHelper = (center, northLat, southLat, heightRatio, widthRatio, centerRange, rangeOnEq, fixIntegrity = true) => {
+  const southRange = rangeOnEq * Math.cos(Math.PI * southLat / 180);
+  const avarageSouthRange = (southRange + centerRange) / 2
+  const northRange = rangeOnEq * Math.cos(Math.PI * northLat / 180);
+  const avarageNorthRange = (northRange + centerRange) / 2
+  const centerLonLat = new LatLon(center[1], center[0]);
+  const northBorder = centerLonLat.destinationPoint((avarageNorthRange / 2) / heightRatio, 0);
+  const southBorder = centerLonLat.destinationPoint((avarageSouthRange / 2) / heightRatio, 180);
+  const westBorderNorth = northBorder.destinationPoint((northRange / 2) / widthRatio, 270);
+  const westBorderSouth = southBorder.destinationPoint((southRange / 2) / widthRatio, 270);
+  const eastBorderNorth = northBorder.destinationPoint((northRange / 2) / widthRatio, 90);
+  const eastBorderSouth = southBorder.destinationPoint((southRange / 2) / widthRatio, 90);
+
+  const extent = [
+    [
+      cropBorderByLimit(center[0], getLowest(center[0], cropBorderByLimit(center[0], westBorderNorth.lon, -180), cropBorderByLimit(center[0],westBorderSouth.lon, -180)), -180),
+      cropBorderByLimit(center[1], southBorder.lat, -90)
+    ],
+    [
+      cropBorderByLimit(center[0], getHighest(center[0], cropBorderByLimit(center[0], eastBorderNorth.lon,180), cropBorderByLimit(center[0], eastBorderSouth.lon,180)), 180),
+      cropBorderByLimit(center[1],northBorder.lat, 90)
+    ]
+  ];
+
+  const intersectedExtent = getIntersection(extent, gridConstants.LEVEL_BOUNDARIES); 
+  if(fixIntegrity) {
+    return ensureExtentIntegrity(intersectedExtent);
+  } else {
+    return intersectedExtent;
+  }
+}
+
+/**
+ * 
  * @param {Array.<Longitude, Latitude>} coordinates Center coordinates of viewPort
  * @param {Number} range Size of map in meters
  * @param {Number} ratio Ratio between width and height
  * @param {Number} optLat Selected latitude with minimized distortion.
+ * @param {Boolean} fixIntegrity Keep results in BBOX [-180,-90],[180,90]
  * @returns {Extent} Extent intersection
  */
 export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat, fixIntegrity) => {
@@ -331,12 +376,10 @@ export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat, fi
     }
   }
 
-  //todo fix point
-
   //determinate landscape or portrait position of map
   let widthRatio = 1;
   let heightRatio = 1;
-  // let layout;
+  
   if(ratio < 1) {
     // portrait layout
     heightRatio = ratio;
@@ -346,19 +389,14 @@ export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat, fi
   }
 
   const rangeOnEq = range / Math.cos(Math.PI * optLat / 180);
-  const optRange = rangeOnEq * Math.cos(Math.PI * coordinates[1] / 180)
-  const centerLonLat = new LatLon(coordinates[1], coordinates[0]);
-  const northBorder = centerLonLat.destinationPoint((optRange / 2) / heightRatio, 0);
-  const southBorder = centerLonLat.destinationPoint((optRange / 2) / heightRatio, 180);
-  const westBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 270);
-  const eastBorder = centerLonLat.destinationPoint((optRange / 2) / widthRatio, 90);
-  const extent = [[cropBorderByLimit(coordinates[0], westBorder.lon, -180), cropBorderByLimit(coordinates[1], southBorder.lat, -90)], [cropBorderByLimit(coordinates[0], eastBorder.lon, 180), cropBorderByLimit(coordinates[1],northBorder.lat, 90)]];
-  const intersectedExtent = getIntersection(extent, gridConstants.LEVEL_BOUNDARIES); 
-  if(fixIntegrity) {
-    return ensureExtentIntegrity(intersectedExtent);
-  } else {
-    return intersectedExtent;
-  }
+  const centerRange = rangeOnEq * Math.cos(Math.PI * coordinates[1] / 180);
+  
+  //first pass use for north and south coordinates center coordinates
+  let fixedExtent = getExtentAroundCoordinatesHelper(coordinates, coordinates[1], coordinates[1], heightRatio, widthRatio, centerRange, rangeOnEq, fixIntegrity);
+
+  //second pass which use calculated coordinates for north and south
+  fixedExtent = getExtentAroundCoordinatesHelper(coordinates, fixedExtent[1][1], fixedExtent[0][1], heightRatio, widthRatio, centerRange, rangeOnEq,  fixIntegrity);
+  return fixedExtent;
 }
 
 /**
@@ -373,4 +411,28 @@ function cropBorderByLimit (beginValue, endValue, limit) {
   } else {
     return limit;
   }
+}
+
+/**
+ * Returns highest value from given three arguments
+ * @param {Number} beginValue 
+ * @param {Number} endValue 
+ * @param {Number} limit 
+ */
+function getHighest (valueOne, valueTwo, valueThree) {
+  const values = [valueOne, valueTwo, valueThree];
+  values.sort((a,b) => a - b);
+  return values[2];
+}
+
+/**
+ * Returns lowest value from given three arguments
+ * @param {Number} beginValue 
+ * @param {Number} endValue 
+ * @param {Number} limit 
+ */
+function getLowest (valueOne, valueTwo, valueThree) {
+  const values = [valueOne, valueTwo, valueThree];
+  values.sort((a,b) => a - b);
+  return values[0];
 }

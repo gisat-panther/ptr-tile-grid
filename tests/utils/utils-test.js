@@ -224,15 +224,15 @@ describe('utils/utils', function () {
     describe('getExtentAroundCoordinates', function () {
         it('Returns extent', function () {
             const extent1 = utils.getExtentAroundCoordinates([-179,89], 78271.51696402048, 1, 50);
-            assert.deepEqual(extent1, [[-179.54753018865017, 88.99044398980956], [-178.45246981134983, 89.00955601019021]]);
+            assert.deepEqual(extent1, [[-179.54750543362417, 88.99039833584733], [-178.4524945663759, 89.00951035609539]]);
         });
 
         it('Fix extent and returns extent', function () {
             const extent2 = utils.getExtentAroundCoordinates([-179,50], 20000000, 1, 50);
-            assert.deepEqual(extent2, [[91.04360634295034, -39.93216059187305], [-89.0436063429504, 40.06783940812695]]);
+            assert.deepEqual(extent2, [[-180, -48.60777124296286], [1.0000000000000877, 85.03391970406341]]);
             
             const extent1 = utils.getExtentAroundCoordinates([-181,50], 20000000, 1, 50, true);
-            assert.deepEqual(extent1, [[89.0436063429504, -39.93216059187305], [-91.0436063429504, 40.06783940812695]]);
+            assert.deepEqual(extent1, [[-1.000000000000099, -48.60777124296286], [180, 85.03391970406341]]);
         });
 
         it('Throw error, coordinates does not lies in extent', function () {
@@ -244,10 +244,10 @@ describe('utils/utils', function () {
             const extent1 = utils.getExtentAroundCoordinates([0,0], 78271.51696402048, 1, 50);
             const extent2 = utils.getExtentAroundCoordinates([0,0], 78271.51696402048, 2, 50);
             const extent3 = utils.getExtentAroundCoordinates([0,0], 78271.51696402048, 0.5, 50);
-            assert.deepEqual(extent1, [[-0.5475468511916786,-0.5475468511916786], [0.5475468511916786,0.5475468511916786]]);
-            assert.deepEqual(extent2, [[-1.0950937023833571,-0.5475468511916786], [1.0950937023833571,0.5475468511916786]]);
-            assert.deepEqual(extent3, [[-0.5475468511916786,-1.0950937023833571], [0.5475468511916786, 1.0950937023833571]]);
-            assert.deepEqual(extent3, [[-0.5475468511916786,-1.0950937023833571], [0.5475468511916786, 1.0950937023833571]]);
+            assert.deepEqual(extent1, [[-0.5475468485278185,-0.5475343498882619], [0.5475468485278185,0.5475343498882619]]);
+            assert.deepEqual(extent2, [[-1.095093687923484,-0.5475343498882619], [1.095093687923484,0.5475343498882619]]);
+            assert.deepEqual(extent3, [[-0.5475468268363242,-1.0949936942394094], [0.5475468268363243, 1.0949936942394094]]);
+            assert.deepEqual(extent3, [[-0.5475468268363242,-1.0949936942394094], [0.5475468268363243, 1.0949936942394094]]);
         })
     })
 });
