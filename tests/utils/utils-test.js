@@ -78,7 +78,7 @@ describe('utils/utils', function () {
         })
 
         it('Throw error, coordinates does not lies in extent', function () {
-            assert.throws(() => utils.intersectTile([185, -90], 180), Error, 'Point 185,-90 does not lies in base extent.');
+            assert.throws(() => utils.intersectTile([185, -90], 180, false), Error, 'Point 185,-90 does not lies in base extent.');
         })
     })
 
@@ -176,7 +176,7 @@ describe('utils/utils', function () {
             assert.deepEqual(polygon1, correctPolygon1);
         })
         it('Check if getTileAsPolygon throw fail', function () {
-            assert.throws(() => utils.getTileAsPolygon([190,90], 90), Error, 'Point 190,90 does not lies in base extent.');
+            assert.throws(() => utils.getTileAsPolygon([190,90], 90, false), Error, 'Point 190,90 does not lies in base extent.');
         })
     })
 
