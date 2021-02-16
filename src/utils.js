@@ -105,8 +105,40 @@ export const ensurePointIntegrity = (point) => {
   return point;
 }
 
+export const ensurePointInWorldBBox = (point) => {
+  let newPoint;
+  if (point) {
+    newPoint = [point[0], point[1]];
+    if (newPoint[1]) {
+      if (newPoint[1]> 90) {
+        newPoint[1]= 90;
+      } else if (newPoint[1]< -90) {
+        newPoint[1]= -90;
+      }
+    }
+
+    if (newPoint[0]) {
+      
+      if (newPoint[0] > 180) {
+        newPoint[0] = 180;
+      } else if (newPoint[0] < -180) {
+        newPoint[0] = -180;
+      } else if (newPoint[0] === -180) {
+        newPoint[0] = 180;
+      }
+    }
+  } else {
+    newPoint = null;
+  }
+  return newPoint;
+}
+
 export const ensureExtentIntegrity = (extent) => {
   return extent.map(ensurePointIntegrity);
+}
+
+export const ensureExtentInWorldBBox = (extent) => {
+  return extent.map(ensurePointInWorldBBox);
 }
 
 export const checkPointIntegrity = (point) => {

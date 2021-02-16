@@ -1,4 +1,5 @@
 import {map as mapUtils} from '@gisatcz/ptr-utils';
+import {mapConstants} from '@gisatcz/ptr-core';
 
 import gridConstants from './constants/grid'
 import {
@@ -11,9 +12,8 @@ import {
     getExtentID,
     intersectTile,
     checkExtentIntegrity,
-    ensureExtentIntegrity,
+    ensureExtentInWorldBBox,
     getGridSizeForLevel,
-    getExtentAroundCoordinates,
 } from './utils';
 
 const tileCache = createCache();
@@ -30,7 +30,7 @@ export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL
         checkExtentIntegrity(extent);
       } catch (error) {
         if(fixIntegrity) {
-            extent = ensureExtentIntegrity(extent);
+            extent = ensureExtentInWorldBBox(extent);
         } else {
             throw error;
         }
@@ -119,15 +119,23 @@ export const getLevelByViewport = (boxRange, viewportRange) => {
  * @param {number} width 
  * @param {number} height 
  * @param {number} boxRange 
- * @param {Array.<number, number>} center [lon, lat]
+ * @param {Array.<number, number>} center [lon, lat] - no object lon,lat
  */
 export const getTileGrid = (width, height, boxRange, center, fixIntegrity) => {
     const viewportRange = mapUtils.view.getMapViewportRange(width, height);
-    const zoom = mapUtils.view.getZoomLevelFromBoxRange(boxRange, width, height);
-    const boxRangeByZoomLevel = mapUtils.view.getBoxRangeFromZoomLevel(zoom, width, height);
     const level = getLevelByViewport(boxRange, viewportRange);
     const ratio =  width / height;
-    const extent = getExtentAroundCoordinates(center, boxRangeByZoomLevel, ratio, 50, fixIntegrity);
-    const tileGrid = getGridForLevelAndExtent(level, extent, fixIntegrity);
+    const extent = mapUtils.view.getBoundingBoxFromViewForEpsg3857(
+			center,
+			boxRange,
+			ratio,
+			mapConstants.averageLatitude
+		);
+
+    const extentAsArray = [[extent.minLon, extent.minLat], [extent.maxLon, extent.maxLat]];
+
+    const extentAsArrayInWorldExtent = ensureExtentInWorldBBox(extentAsArray);
+
+    const tileGrid = getGridForLevelAndExtent(level, extentAsArrayInWorldExtent, fixIntegrity);
     return tileGrid;
   }
