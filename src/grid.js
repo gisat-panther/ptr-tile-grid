@@ -22,9 +22,10 @@ const tileCache = createCache();
  * Return grid for given level and extent. If no extent defined, global extend is used.
  * @param {Number} level Level between {0 - 26}
  * @param {Array.<Array>} extent Restricted extent. Default extent is all globe. Extent is defined by left bottom and right top lon/lat.
+ * @param {bool} fixIntegrity Ensure that extent will not overfloat antimeridian. Example: longitude -190 is changed to -180.
  * @return {Array.<Array.<Array.<Longitude, Latitude>>>} LevelTiles defined as array of rows. Each row contains Tiles.
  */
-export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL_BOUNDARIES, fixIntegrity) => {
+export const getGridForLevelAndExtent = (level = 0, extent = gridConstants.LEVEL_BOUNDARIES, fixIntegrity = true) => {
     //throw error if extent does not fit integrity check    
     try {
         checkExtentIntegrity(extent);
@@ -119,7 +120,9 @@ export const getLevelByViewport = (boxRange, viewportRange) => {
  * @param {number} width 
  * @param {number} height 
  * @param {number} boxRange 
- * @param {Array.<number, number>} center [lon, lat] - no object lon,lat
+ * @param {Object} center {lon, lat}
+ * @param {bool} fixIntegrity Ensure that computed extent will not overfloat antimeridian. Example: longitude -190 is changed to -180.
+ * @param {Object} center {lon, lat}
  */
 export const getTileGrid = (width, height, boxRange, center, fixIntegrity) => {
     const viewportRange = mapUtils.view.getMapViewportRange(width, height);

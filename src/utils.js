@@ -164,9 +164,10 @@ export const checkExtentIntegrity = (extent) => {
  * Point belongs to tile if lies on bottom or left border of tile.
  * @param {Array.<Longitude, Latitude>} point 
  * @param {Number} gridSize 
+ * @param {bool} fixIntegrity Ensure point position in world extent 
  * @returns {Array.<Longitude, Latitude>}
  */
-export const intersectTile = (point, gridSize, fixIntegrity) => {
+export const intersectTile = (point, gridSize, fixIntegrity = true) => {
     //throw error if point does not fit integrity check
     try {
       checkPointIntegrity(point);
@@ -217,9 +218,10 @@ export const forEachTile = (tileGrid, callback) => {
 /**
  * Returns passed tile as polygon defined by array of nodes. Polygon is closed by last point same as first.
  * @param {Array.<Longitude, Latitude>} tile 
+ * @param {bool} fixIntegrity Ensure tile position in world extent
  * @param {Number} gridSize 
  */
-export const getTileAsPolygon = (tile, gridSize, fixIntegrity) => {
+export const getTileAsPolygon = (tile, gridSize, fixIntegrity = true) => {
   try {
     checkPointIntegrity(tile, fixIntegrity);
   } catch (error) {
@@ -265,9 +267,10 @@ export const getTileAsPolygon = (tile, gridSize, fixIntegrity) => {
  * Convert TileGrid to GeoJSON
  * @param {Array.<Array.<Array.<Longitude, Latitude>>>} tileGrid LevelTiles defined as array of rows. Each row contains Tiles.
  * @param {Number} gridSize 
+ * @param {bool} fixIntegrity Ensure each tile from tileGrid position in world extent.
  * @returns {Array.<Array.<Longitude, Latitude>>} polygon
  */
-export const getTileGridAsGeoJSON = (tileGrid, size, fixIntegrity) => {
+export const getTileGridAsGeoJSON = (tileGrid, size, fixIntegrity = true) => {
   const tilesPolygons = [];
   forEachTile(tileGrid, (tile) => {
     tilesPolygons.push(getTileAsPolygon(tile, size, fixIntegrity));
@@ -348,6 +351,7 @@ export const getIntersection = (extent1, extent2) => {
  * @param {Number} range Size of map in meters
  * @param {Number} ratio Ratio between width and height
  * @param {Number} optLat Selected latitude with minimized distortion.
+ * @param {bool} fixIntegrity Ensure center position in world extent
  * @returns {Extent} Extent intersection
  */
 export const getExtentAroundCoordinates = (coordinates, range, ratio, optLat, fixIntegrity) => {
