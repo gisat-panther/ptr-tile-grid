@@ -25,6 +25,7 @@ export default {
   external: [
     ...lodashExternal,
     '@gisatcz/ptr-utils',
+    '@gisatcz/ptr-core'
   ],
   output: {
     file: {
