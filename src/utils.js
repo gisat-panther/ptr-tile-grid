@@ -78,6 +78,14 @@ export const containsExtent = (extent1, extent2) => {
   );
 }
 
+/**
+ * Check if given point is world extent.
+ * If coordinates overfloats world extent, they are recalculated to the valit coordinates.
+ * Example longitude -190 is recalculated to longitude 170
+ * Example latitude -92 is recalculated to longitude -90
+ * @param {Array} point 
+ * @return {Array}
+ */
 export const ensurePointIntegrity = (point) => {
   if (point) {
     if (point[1]) {
@@ -105,6 +113,13 @@ export const ensurePointIntegrity = (point) => {
   return point;
 }
 
+/**
+ * Check if given point is world extent. If coordinates overfloats world extent, then are fixed by placing on the border.
+ * Example longitude -190 is recalculated to longitude -180
+ * Example latitude -92 is recalculated to longitude -90
+ * @param {Array} point 
+ * @return {Array}
+ */
 export const ensurePointInWorldBBox = (point) => {
   let newPoint;
   if (point) {
@@ -133,27 +148,50 @@ export const ensurePointInWorldBBox = (point) => {
   return newPoint;
 }
 
+/**
+ * Apply ensurePointIntegrity on each defined extent.
+ * 
+ * @param {Array.[Array<Lon,Lat>]} extent 
+ * @return {Array.[Array]}
+ */
 export const ensureExtentIntegrity = (extent) => {
   return extent.map(ensurePointIntegrity);
 }
 
+/**
+ * Apply ensurePointInWorldBBox on each defined extent.
+ * @param {*} extent 
+ * @return {Array.[Array<Lon,Lat>]}
+ */
 export const ensureExtentInWorldBBox = (extent) => {
   return extent.map(ensurePointInWorldBBox);
 }
 
+/**
+ * Check if given point lies in world extent.
+ * If dont, throw Error
+ * @param {Array.<Lon,Lat>} point 
+ * @return bool
+ */
 export const checkPointIntegrity = (point) => {
   if(containsXY(gridConstants.LEVEL_BOUNDARIES, point)) {
-    return true
+    return true;
   } else {
     throw new Error(`Point ${point} does not lies in base extent.`);
   }
 }
 
+/**
+ * Check if all points from given extent lies in world extent.
+ * If dont, throw Error
+ * @param {Array} extent 
+ * @return bool
+ */
 export const checkExtentIntegrity = (extent) => {
   if(containsExtent(gridConstants.LEVEL_BOUNDARIES, extent)) {
     return true
   } else {
-    throw `Extent ${extent} does not lies in base extent.`;
+    throw new Error(`Extent ${extent} does not lies in base extent.`);
   }
 }
 

@@ -180,6 +180,24 @@ describe('utils/utils', function () {
         })
     })
 
+    describe('getTileGridAsGeoJSON', function () {
+        it('Check if returned polygon is correct for given tile', function () {
+            const correctPolygon1 = {
+                "type": "FeatureCollection",
+                "features": [{
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[0,0],[0,90], [90,90], [90,0], [0,0]]]
+                    }
+                }]
+            };
+            const polygon1 = utils.getTileGridAsGeoJSON([[[0,0]]], 90);
+            assert.deepEqual(polygon1, correctPolygon1);
+        })
+    })
+
     describe('intersects', function () {
         it('Determinate if two extents intersects.', function () {
             const extent1 = [[0,0], [10,10]];
@@ -270,6 +288,26 @@ describe('checkPointIntegrity', function () {
     })
 })
 
+describe('checkExtentIntegrity', function () {
+
+    // const a = utils.checkExtentIntegrity([[-190,-100],[190,100]]);
+    // debugger
+
+
+    it('Throw error', function () {
+        assert.throws(() => utils.checkExtentIntegrity([[-190,-100],[190,100]]), Error, 'Extent -190,-100,190,100 does not lies in base extent.');
+        assert.throws(() => utils.checkExtentIntegrity([[-190,-90],[180,90]]), Error, 'Extent -190,-90,180,90 does not lies in base extent.');
+        assert.throws(() => utils.checkExtentIntegrity([[90,90],[180,200]]), Error, 'Extent 90,90,180,200 does not lies in base extent.');
+        assert.throws(() => utils.checkExtentIntegrity([[90,-200],[180,-300]]), Error, 'Extent 90,-200,180,-300 does not lies in base extent.');
+    })
+
+    it('Does not throw error', function () {
+        assert.equal(utils.checkExtentIntegrity([[-180,-90],[90,90]]), true);
+        assert.equal(utils.checkExtentIntegrity([[-179,-90],[90,90]]), true);
+        assert.equal(utils.checkExtentIntegrity([[0,0],[90,90]]), true);
+    })
+})
+
 describe('ensurePointIntegrity', function () {
     it('Fix point coords', function () {
         assert.deepEqual(utils.ensurePointIntegrity([190,150]), [-170,90]);
@@ -284,11 +322,34 @@ describe('ensurePointIntegrity', function () {
     })
 })
 
+describe('ensurePointInWorldBBox', function () {
+    it('Fix point coords', function () {
+        assert.deepEqual(utils.ensurePointInWorldBBox([190,150]), [180,90]);
+        assert.deepEqual(utils.ensurePointInWorldBBox([190,100]), [180,90]);
+        assert.deepEqual(utils.ensurePointInWorldBBox([-195,-300]), [-180,-90]);
+    })
+
+    it('Keep point coords untouched', function () {
+        assert.deepEqual(utils.ensurePointInWorldBBox([180,90]), [180,90]);
+        assert.deepEqual(utils.ensurePointInWorldBBox([-170,0]), [-170,0]);
+        assert.deepEqual(utils.ensurePointInWorldBBox([-19,-30]), [-19,-30]);
+    })
+})
+
 describe('ensureExtentIntegrity', function () {
     it('Fix extent coords', function () {
         assert.deepEqual(utils.ensureExtentIntegrity([[190,-150],[-190,150]]), [[-170,-90], [170,90]]);
     })
     it('Keep extent coords untouched', function () {
         assert.deepEqual(utils.ensureExtentIntegrity([[-90,-15],[19,15]]), [[-90,-15], [19,15]]);
+    })
+})
+
+describe('ensureExtentInWorldBBox', function () {
+    it('Fix extent coords', function () {
+        assert.deepEqual(utils.ensureExtentInWorldBBox([[190,-150],[-190,150]]), [[180,-90], [-180,90]]);
+    })
+    it('Keep extent coords untouched', function () {
+        assert.deepEqual(utils.ensureExtentInWorldBBox([[-90,-15],[19,15]]), [[-90,-15], [19,15]]);
     })
 })
