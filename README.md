@@ -1,6 +1,6 @@
 # ptr-tile-grid
 
-Tile grid for globe. 
+Tile grid for globe.
 
 Tile grid covers the whole globe. Extent of grid is [bottomLeft, topRight] [[-180,-90], [180, 90]].
 
@@ -9,12 +9,10 @@ It is possible to generate all tiles for a certain level. Zero lavel has two til
 Function getGridForLevelAndExtent(level, extent) creates grid for asked level and extent. Extent parameter is optional and use whole globe as default.
 
 ```js
-import {
-    getSizeForLevel,
-} from './src/grid';
+import {getSizeForLevel} from './src/grid';
 
 const grid0 = getGridForLevelAndExtent(0);
-//[ 
+//[
 //    [[-180,-90], [0,-90]]
 //]
 const grid1 = getGridForLevelAndExtent(1);
@@ -34,11 +32,12 @@ const grid2 = getGridForLevelAndExtent(2);
 ### Tiles for extent
 
 ```js
-import {
-    getSizeForLevel,
-} from './src/grid';
+import {getSizeForLevel} from './src/grid';
 
-const grid2 = utils.getGridForLevelAndExtent(2, [[-10,-10], [10, 10]]);
+const grid2 = utils.getGridForLevelAndExtent(2, [
+	[-10, -10],
+	[10, 10],
+]);
 // [
 //   [[-45,0], [0,0]],
 //   [[-45,-45], [0,-45]
@@ -46,12 +45,11 @@ const grid2 = utils.getGridForLevelAndExtent(2, [[-10,-10], [10, 10]]);
 ```
 
 ## Tile
+
 Tile is spherical square with same side size in degrees. Side size is same for all tiles in same level. Each tile is defined by left bottom (south west) corner longitude latitude.
 
 ```js
-import {
-    getSizeForLevel,
-} from './src/grid';
+import {getSizeForLevel} from './src/grid';
 
 const level0 = getSizeForLevel(0); //180
 const level1 = getSizeForLevel(1); //90
@@ -67,17 +65,15 @@ const level10 = getSizeForLevel(10); //0.17578125
 ```
 
 ## Level
+
 Tile set is defined by pyramid of levels, where each next level has quadratically more tile than level before.
 
 Base level is level 0 with two tiles and side size 180°.
 
-Level is required parameter for function ```getGridForLevelAndExtent```. Usual usecase how determinate right level is by ```getLevelByViewport(boxRange, viewportRange)``` , where boxrange is smaller size of visible map in meters and viewportRange is smaller size of viewport in pixels.
-
+Level is required parameter for function `getGridForLevelAndExtent`. Usual usecase how determinate right level is by `getLevelByViewport(boxRange, viewportRange)` , where boxrange is smaller size of visible map in meters and viewportRange is smaller size of viewport in pixels.
 
 ```js
-import {
-    getLevelByViewport,
-} from './src/grid';
+import {getLevelByViewport} from './src/grid';
 
 const boxRange = 240; //meters
 const viewport = 240; //pixels
@@ -86,5 +82,5 @@ const level0 = grid.getLevelByViewport(boxRange, viewport);
 // level0 = 17
 
 const level1 = grid.getLevelByViewport(50000000, 250);
-// level1 = 0 
+// level1 = 0
 ```
