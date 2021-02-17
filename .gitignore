@@ -10,6 +10,9 @@
 /dist
 /lib
 
+# coverage
+.nyc_output
+
 # test
 /build
 
