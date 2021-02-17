@@ -116,6 +116,8 @@ export const getLevelByViewport = (boxRange, viewportRange) => {
 }
 
 /**
+ * Create TileGrid based on given parameters.
+ * It works only with boxrange and center generated from map in EPSG:3857.
  * 
  * @param {number} width 
  * @param {number} height 
