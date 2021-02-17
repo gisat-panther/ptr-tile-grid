@@ -10,11 +10,7 @@ const lodashExternal = [
 
 export default {
 	input: 'tests/**/*-test.js',
-	external: [
-		'chai',
-		...lodashExternal,
-		'@gisatcz/ptr-utils',
-	],
+	external: ['chai', ...lodashExternal, '@gisatcz/ptr-utils'],
 	output: {
 		file: 'build/bundle-tests.js',
 		format: env,
