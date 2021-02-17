@@ -8,3 +8,4 @@ package-lock.json
 public
 static
 coverage
+.nyc_output
