@@ -190,7 +190,7 @@ export const getCenterOfTile = (level, tile) => {
 };
 
 /**
- * Return parent tile for given tile
+ * Return parent tile for given level and tile
  * @param level {number}
  * @param tile {Array}
  * @return {{level, tile}}
