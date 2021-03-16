@@ -167,3 +167,49 @@ export const getTileGrid = (width, height, boxRange, center, fixIntegrity) => {
 	);
 	return tileGrid;
 };
+
+/**
+ * Return center point of the tile for given level and tile
+ * @param level {number}
+ * @param tile {Array}
+ * @return {{lon: number, lat: number}}
+ */
+export const getCenterOfTile = (level, tile) => {
+	if (level && tile) {
+		const tileSize = getGridSizeForLevel(level);
+		const lon = tile[0] + tileSize / 2;
+		const lat = tile[1] + tileSize / 2;
+
+		return {
+			lat,
+			lon,
+		};
+	} else {
+		return null;
+	}
+};
+
+/**
+ * Return parent tile for given tile
+ * @param level {number}
+ * @param tile {Array}
+ * @return {{level, tile}}
+ */
+export const getParentTile = (level, tile) => {
+	if (level && tile) {
+		const parentLevel = level - 1;
+		const centerOfTile = getCenterOfTile(level, tile);
+		const tileSizeOfParent = getGridSizeForLevel(parentLevel);
+		const parentTile = intersectTile(
+			[centerOfTile.lon, centerOfTile.lat],
+			tileSizeOfParent
+		);
+
+		return {
+			level: parentLevel,
+			tile: parentTile,
+		};
+	} else {
+		return null;
+	}
+};
