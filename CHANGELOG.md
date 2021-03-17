@@ -1,3 +1,15 @@
+# v0.0.3 (Wed Mar 17 2021)
+
+#### 🐾 Patch
+
+- getParentTile method, tests & dependencies [#16](https://github.com/gisat-panther/ptr-tile-grid/pull/16) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v0.0.2 (Wed Feb 17 2021)
 
 #### 🐾 Patch
