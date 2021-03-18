@@ -1,3 +1,15 @@
+# v0.0.4 (Thu Mar 18 2021)
+
+#### 🐾 Patch
+
+- Fix getting nearest divisible numbers + tests [#17](https://github.com/gisat-panther/ptr-tile-grid/pull/17) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v0.0.3 (Wed Mar 17 2021)
 
 #### 🐾 Patch
