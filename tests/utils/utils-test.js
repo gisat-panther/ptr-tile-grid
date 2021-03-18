@@ -317,6 +317,27 @@ describe('utils/utils', function () {
 			const polygon1 = utils.getTileAsPolygon([0, 0], 90);
 			assert.deepEqual(polygon1, correctPolygon1);
 		});
+
+		it('Check if returned polygon is correct for given tile in string', function () {
+			const correctPolygon1 = {
+				type: 'Feature',
+				properties: {},
+				geometry: {
+					type: 'Polygon',
+					coordinates: [
+						[
+							[0, 0],
+							[0, 90],
+							[90, 90],
+							[90, 0],
+							[0, 0],
+						],
+					],
+				},
+			};
+			const polygon1 = utils.getTileAsPolygon(['0','0'], 90);
+			assert.deepEqual(polygon1, correctPolygon1);
+		});
 		it('Check if getTileAsPolygon throw fail', function () {
 			assert.throws(
 				() => utils.getTileAsPolygon([190, 90], 90, false),
