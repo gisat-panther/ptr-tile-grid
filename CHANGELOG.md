@@ -1,3 +1,15 @@
+# v0.0.5 (Thu Mar 18 2021)
+
+#### 🐾 Patch
+
+- Accept tile as array of strings for getTileAsPolygon [#18](https://github.com/gisat-panther/ptr-tile-grid/pull/18) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v0.0.4 (Thu Mar 18 2021)
 
 #### 🐾 Patch
