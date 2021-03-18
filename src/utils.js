@@ -312,11 +312,13 @@ export const forEachTile = (tileGrid, callback) => {
  * @param {Number} gridSize
  */
 export const getTileAsPolygon = (tile, gridSize, fixIntegrity = true) => {
+	//todo - use common function for parsing tiles
+	let numericTile = tile.map(parseFloat);
 	try {
-		checkPointIntegrity(tile, fixIntegrity);
+		checkPointIntegrity(numericTile, fixIntegrity);
 	} catch (error) {
 		if (fixIntegrity) {
-			tile = ensurePointIntegrity(tile);
+			numericTile = ensurePointIntegrity(numericTile);
 		} else {
 			throw error;
 		}
@@ -327,15 +329,15 @@ export const getTileAsPolygon = (tile, gridSize, fixIntegrity = true) => {
 	const coordsInnerFill = coordsInner.map((v, i) => {
 		switch (i) {
 			case 0:
-				return [tile[0], tile[1]];
+				return [numericTile[0], numericTile[1]];
 			case 1:
-				return [tile[0], tile[1] + gridSize];
+				return [numericTile[0], numericTile[1] + gridSize];
 			case 2:
-				return [tile[0] + gridSize, tile[1] + gridSize];
+				return [numericTile[0] + gridSize, numericTile[1] + gridSize];
 			case 3:
-				return [tile[0] + gridSize, tile[1]];
+				return [numericTile[0] + gridSize, numericTile[1]];
 			case 4:
-				return [tile[0], tile[1]];
+				return [numericTile[0], numericTile[1]];
 		}
 	});
 
