@@ -11,23 +11,57 @@ export const getExtentID = (extent = gridConstants.LEVEL_BOUNDARIES) => {
 };
 
 /**
+ * Determinate defimal precision of number
+ * @param {Number} number
+ * @returns {Number}
+ */
+export const precision = number => {
+	if (!Number.isFinite(number)) {
+		return 0;
+	}
+	let e = 1,
+		p = 0;
+	while (Math.round(number * e) / e !== number) {
+		e *= 10;
+		p++;
+	}
+
+	return p;
+};
+
+/**
  * Returns closer divisible that is higher than given number,
  * @param {Number} number
  * @param {Number} divisor
  * @returns {Number}
  */
 export const closestDivisibleHigher = (number, divisor) => {
-	// return (number + divisor) - (number % divisor);
+	if (divisor === 0) {
+		return number;
+	}
 
-	const rest = number % divisor;
+	const numberPrecision = precision(number);
+	const divisorPrecision = precision(divisor);
 
-	if (number < 0) {
-		return -closestDivisibleLower(Math.abs(number), divisor);
+	const maxPrecision = Math.max(1, numberPrecision, divisorPrecision);
+	const decimalCorrection = Math.pow(10, maxPrecision);
+	const intNumber = number * decimalCorrection;
+	const intDivisor = divisor * decimalCorrection;
+
+	const rest = intNumber % intDivisor;
+
+	if (intNumber < 0) {
+		return (
+			-closestDivisibleLower(Math.abs(intNumber), intDivisor) /
+			decimalCorrection
+		);
 	} else {
 		if (rest !== 0) {
-			return number + divisor - (number % divisor);
+			return (
+				(intNumber + intDivisor - (intNumber % intDivisor)) / decimalCorrection
+			);
 		} else {
-			return number;
+			return intNumber / decimalCorrection;
 		}
 	}
 };
@@ -39,10 +73,25 @@ export const closestDivisibleHigher = (number, divisor) => {
  * @returns {Number}
  */
 export const closestDivisibleLower = (number, divisor) => {
-	if (number < 0) {
-		return -closestDivisibleHigher(Math.abs(number), divisor);
+	if (divisor === 0) {
+		return number;
+	}
+
+	const numberPrecision = precision(number);
+	const divisorPrecision = precision(divisor);
+
+	const maxPrecision = Math.max(1, numberPrecision, divisorPrecision);
+	const decimalCorrection = Math.pow(10, maxPrecision);
+	const intNumber = number * decimalCorrection;
+	const intDivisor = divisor * decimalCorrection;
+
+	if (intNumber < 0) {
+		return (
+			-closestDivisibleHigher(Math.abs(intNumber), intDivisor) /
+			decimalCorrection
+		);
 	} else {
-		return number - (number % divisor);
+		return (intNumber - (intNumber % intDivisor)) / decimalCorrection;
 	}
 };
 
