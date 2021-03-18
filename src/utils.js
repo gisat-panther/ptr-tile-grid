@@ -11,7 +11,7 @@ export const getExtentID = (extent = gridConstants.LEVEL_BOUNDARIES) => {
 };
 
 /**
- * Determinate defimal precision of number
+ * Determinate decimal precision of number
  * @param {Number} number
  * @returns {Number}
  */
