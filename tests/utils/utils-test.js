@@ -335,7 +335,7 @@ describe('utils/utils', function () {
 					],
 				},
 			};
-			const polygon1 = utils.getTileAsPolygon(['0','0'], 90);
+			const polygon1 = utils.getTileAsPolygon(['0', '0'], 90);
 			assert.deepEqual(polygon1, correctPolygon1);
 		});
 		it('Check if getTileAsPolygon throw fail', function () {
