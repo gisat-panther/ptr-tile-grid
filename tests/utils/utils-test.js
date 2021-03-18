@@ -24,6 +24,30 @@ describe('utils/utils', function () {
 			assert.equal(utils.closestDivisibleHigher(-91, 45), -90);
 			assert.equal(utils.closestDivisibleHigher(-95, 180), 0);
 			assert.equal(utils.closestDivisibleHigher(90, 90), 90);
+
+			assert.equal(
+				utils.closestDivisibleHigher(5.00000000000000001, 0.17578125),
+				5.09765625
+			);
+
+			const level20size = utils.getGridSizeForLevel(20);
+			assert.equal(
+				utils.closestDivisibleHigher(5.000000000000000000001, level20size),
+				5.000152587890626
+			);
+			const level10size = utils.getGridSizeForLevel(10);
+			assert.equal(
+				utils.closestDivisibleHigher(5.000000000000000000001, level10size),
+				5.09765625
+			);
+
+			assert.equal(utils.closestDivisibleHigher(0.1, 0.2), 0.2);
+			assert.equal(
+				utils.closestDivisibleHigher(0.0000000001, 0.0000000002),
+				0.0000000002
+			);
+
+			assert.equal(utils.closestDivisibleHigher(0.0000000001, 0), 0.0000000001);
 		});
 	});
 
@@ -35,6 +59,30 @@ describe('utils/utils', function () {
 			assert.equal(utils.closestDivisibleLower(0, 180), 0);
 			assert.equal(utils.closestDivisibleLower(100, 33), 99);
 			assert.equal(utils.closestDivisibleLower(1.5555, 2), 0);
+
+			assert.equal(
+				utils.closestDivisibleLower(5.00000000000000001, 0.17578125),
+				4.921875
+			);
+
+			const level20size = utils.getGridSizeForLevel(20);
+			assert.equal(
+				utils.closestDivisibleLower(5.000000000000000000001, level20size),
+				4.999980926513672
+			);
+			const level10size = utils.getGridSizeForLevel(10);
+			assert.equal(
+				utils.closestDivisibleLower(5.000000000000000000001, level10size),
+				4.921875
+			);
+
+			assert.equal(utils.closestDivisibleLower(0.1, 0.2), 0);
+			assert.equal(utils.closestDivisibleLower(0.0000000001, 0.0000000002), 0);
+			assert.equal(
+				utils.closestDivisibleLower(0.000000000000002, 0.000000000000001),
+				0.000000000000002
+			);
+			assert.equal(utils.closestDivisibleLower(0.1, 0), 0.1);
 		});
 	});
 
@@ -529,7 +577,6 @@ describe('checkPointIntegrity', function () {
 
 describe('checkExtentIntegrity', function () {
 	// const a = utils.checkExtentIntegrity([[-190,-100],[190,100]]);
-	// debugger
 
 	it('Throw error', function () {
 		assert.throws(
@@ -647,6 +694,24 @@ describe('ensureExtentIntegrity', function () {
 				[19, 15],
 			]
 		);
+	});
+});
+
+describe('utils/precision', function () {
+	it('Get right precision', function () {
+		assert.deepEqual(utils.precision(null), 0);
+		assert.deepEqual(utils.precision(''), 0);
+		assert.deepEqual(utils.precision(undefined), 0);
+
+		assert.deepEqual(utils.precision(0), 0);
+		assert.deepEqual(utils.precision(10), 0);
+		assert.deepEqual(utils.precision(100000), 0);
+		assert.deepEqual(utils.precision(2e10 - 15), 0);
+
+		assert.deepEqual(utils.precision(0.1), 1);
+		assert.deepEqual(utils.precision(0.00001), 5);
+		assert.deepEqual(utils.precision(0.0000000009281), 13);
+		assert.deepEqual(utils.precision(2e-15), 15);
 	});
 });
 
