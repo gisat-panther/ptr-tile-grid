@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
 import {grid} from '../../src/';
-import {tilegrid_1, tilegrid_2} from './mockTilegridData';
+import {tilegrid_1, tilegrid_2, tilegrid_3} from './mockTilegridData';
 
 describe('grid/grid', function () {
 	describe('getOrigin', function () {
