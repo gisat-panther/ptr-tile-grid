@@ -10,6 +10,8 @@ import {
 	checkExtentIntegrity,
 	ensureExtentInWorldBBox,
 	getGridSizeForLevel,
+	safeSumming,
+	safeSubtraction,
 } from './utils';
 
 const tileCache = createCache();
@@ -53,16 +55,17 @@ export const getGridForLevelAndExtent = (
 		for (
 			let tileLat = leftBottomTile[1];
 			tileLat <= rightTopTile[1];
-			tileLat += gridSize
+			tileLat = safeSumming(tileLat, gridSize)
 		) {
 			let row = [];
-			const crossMeridian = rightTopTile[0] - leftBottomTile[0] <= -180;
+			const crossMeridian =
+				safeSubtraction(rightTopTile[0], leftBottomTile[0]) <= -180;
 			if (crossMeridian) {
 				//generate tile to meridian
 				for (
 					let tileLon = leftBottomTile[0];
-					tileLon + gridSize <= 180;
-					tileLon += gridSize
+					safeSumming(tileLon, gridSize) <= 180;
+					tileLon = safeSumming(tileLon, gridSize)
 				) {
 					row = [...row, [tileLon, tileLat]];
 				}
@@ -70,7 +73,7 @@ export const getGridForLevelAndExtent = (
 				for (
 					let tileLon = -180;
 					tileLon <= rightTopTile[0];
-					tileLon += gridSize
+					tileLon = safeSumming(tileLon, gridSize)
 				) {
 					row = [...row, [tileLon, tileLat]];
 				}
@@ -78,7 +81,7 @@ export const getGridForLevelAndExtent = (
 				for (
 					let tileLon = leftBottomTile[0];
 					tileLon <= rightTopTile[0];
-					tileLon += gridSize
+					tileLon = safeSumming(tileLon, gridSize)
 				) {
 					row = [...row, [tileLon, tileLat]];
 				}
@@ -177,8 +180,8 @@ export const getTileGrid = (width, height, boxRange, center, fixIntegrity) => {
 export const getCenterOfTile = (level, tile) => {
 	if (level && tile) {
 		const tileSize = getGridSizeForLevel(level);
-		const lon = tile[0] + tileSize / 2;
-		const lat = tile[1] + tileSize / 2;
+		const lon = safeSumming(tile[0], tileSize / 2);
+		const lat = safeSumming(tile[1], tileSize / 2);
 
 		return {
 			lat,

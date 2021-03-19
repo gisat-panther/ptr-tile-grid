@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 
 import {grid} from '../../src/';
+import {tilegrid_1, tilegrid_2} from './mockTilegridData';
 
 describe('grid/grid', function () {
 	describe('getOrigin', function () {
@@ -158,6 +159,38 @@ describe('grid/grid', function () {
 			assert.equal(level1, 1);
 			const level24 = grid.getLevelByResolution(resolution25);
 			assert.equal(level24, 24);
+		});
+	});
+
+	describe('getTileGrid', function () {
+		it('Check if returned polygon is correct for given tile', function () {
+			const mapWidth = 810.5499877929688;
+			const mapHeight = 764;
+			const levelBoxRange = 600598.0379691155;
+			const center = {lat: 46.924007100770275, lon: 3.2627686660155857};
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
+				mapHeight,
+				levelBoxRange,
+				center,
+				true
+			);
+			assert.deepEqual(tileGrid, tilegrid_2);
+		});
+
+		it('Check if returned tilegrid has correct tiles', function () {
+			const mapWidth = 810.5499877929688;
+			const mapHeight = 764;
+			const levelBoxRange = 600598.0379691155;
+			const center = {lat: 49.91232450346397, lon: 1.6894303172424334};
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
+				mapHeight,
+				levelBoxRange,
+				center,
+				true
+			);
+			assert.deepEqual(tileGrid, tilegrid_1);
 		});
 	});
 });
