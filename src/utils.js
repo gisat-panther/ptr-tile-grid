@@ -37,7 +37,7 @@ export const safeSumming = (num1, num2) => {
 	const intNum1 = num1 * decimalCorrection;
 	const intNum2 = num2 * decimalCorrection;
 	return (intNum1 + intNum2) / decimalCorrection;
-}
+};
 
 export const safeSubtraction = (num1, num2) => {
 	const num1Precision = precision(num1);
@@ -47,7 +47,7 @@ export const safeSubtraction = (num1, num2) => {
 	const intNum1 = num1 * decimalCorrection;
 	const intNum2 = num2 * decimalCorrection;
 	return (intNum1 - intNum2) / decimalCorrection;
-}
+};
 
 /**
  * Returns closer divisible that is higher than given number,
@@ -350,9 +350,12 @@ export const getTileAsPolygon = (tile, gridSize, fixIntegrity = true) => {
 			case 1:
 				return [numericTile[0], safeSumming(numericTile[1], gridSize)];
 			case 2:
-				return [ safeSumming(numericTile[0], gridSize),  safeSumming(numericTile[1], gridSize)];
+				return [
+					safeSumming(numericTile[0], gridSize),
+					safeSumming(numericTile[1], gridSize),
+				];
 			case 3:
-				return [ safeSumming(numericTile[0], gridSize), numericTile[1]];
+				return [safeSumming(numericTile[0], gridSize), numericTile[1]];
 			case 4:
 				return [numericTile[0], numericTile[1]];
 		}

@@ -24,8 +24,14 @@ describe('utils/utils', function () {
 			assert.equal(utils.closestDivisibleHigher(-91, 45), -90);
 			assert.equal(utils.closestDivisibleHigher(-95, 180), 0);
 			assert.equal(utils.closestDivisibleHigher(90, 90), 90);
-			assert.equal(utils.closestDivisibleHigher(-2763046333156462, 1406250000000000), -1406250000000000);
-			assert.equal(utils.closestDivisibleHigher(-2.763046333156462, 1.40625), -1.40625);
+			assert.equal(
+				utils.closestDivisibleHigher(-2763046333156462, 1406250000000000),
+				-1406250000000000
+			);
+			assert.equal(
+				utils.closestDivisibleHigher(-2.763046333156462, 1.40625),
+				-1.40625
+			);
 			assert.equal(
 				utils.closestDivisibleHigher(5.00000000000000001, 0.17578125),
 				5.09765625
@@ -60,7 +66,10 @@ describe('utils/utils', function () {
 			assert.equal(utils.closestDivisibleLower(0, 180), 0);
 			assert.equal(utils.closestDivisibleLower(100, 33), 99);
 			assert.equal(utils.closestDivisibleLower(1.5555, 2), 0);
-			assert.equal(utils.closestDivisibleLower(-2.763046333156462, 1.40625), -2.8125);
+			assert.equal(
+				utils.closestDivisibleLower(-2.763046333156462, 1.40625),
+				-2.8125
+			);
 
 			assert.equal(
 				utils.closestDivisibleLower(5.00000000000000001, 0.17578125),
@@ -740,23 +749,29 @@ describe('utils/precision', function () {
 
 describe('safeSubtraction', function () {
 	it('Correctly math', function () {
-		assert.equal(utils.safeSubtraction(1,2), -1);
-		assert.equal(utils.safeSubtraction(2,1), 1);
-		assert.equal(utils.safeSubtraction(0.2,0.1), 0.1);
-		assert.equal(utils.safeSubtraction(0.1,0.2), -0.1);
-		assert.equal(utils.safeSubtraction(0.0000000000001,0.000000000005), -0.0000000000049);
+		assert.equal(utils.safeSubtraction(1, 2), -1);
+		assert.equal(utils.safeSubtraction(2, 1), 1);
+		assert.equal(utils.safeSubtraction(0.2, 0.1), 0.1);
+		assert.equal(utils.safeSubtraction(0.1, 0.2), -0.1);
+		assert.equal(
+			utils.safeSubtraction(0.0000000000001, 0.000000000005),
+			-0.0000000000049
+		);
 	});
 });
 
 describe('safeSumming', function () {
 	it('Correctly math', function () {
-		assert.equal(utils.safeSumming(1,2), 3);
-		assert.equal(utils.safeSumming(-2,1), -1);
-		assert.equal(utils.safeSumming(0.2,0.1), 0.3);
-		assert.equal(utils.safeSumming(0.1,0.2), 0.3);
-		
-		assert.equal(utils.safeSumming(-0.1,0.2), 0.1);
-		assert.equal(utils.safeSumming(0.0000000000001,0.000000000005), 0.0000000000051);
+		assert.equal(utils.safeSumming(1, 2), 3);
+		assert.equal(utils.safeSumming(-2, 1), -1);
+		assert.equal(utils.safeSumming(0.2, 0.1), 0.3);
+		assert.equal(utils.safeSumming(0.1, 0.2), 0.3);
+
+		assert.equal(utils.safeSumming(-0.1, 0.2), 0.1);
+		assert.equal(
+			utils.safeSumming(0.0000000000001, 0.000000000005),
+			0.0000000000051
+		);
 	});
 });
 
