@@ -1,3 +1,15 @@
+# v0.0.6 (Fri Mar 19 2021)
+
+#### 🐾 Patch
+
+- Correct math operations with small numbers [#19](https://github.com/gisat-panther/ptr-tile-grid/pull/19) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v0.0.5 (Thu Mar 18 2021)
 
 #### 🐾 Patch
