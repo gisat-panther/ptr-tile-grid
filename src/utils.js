@@ -29,6 +29,26 @@ export const precision = number => {
 	return p;
 };
 
+export const safeSumming = (num1, num2) => {
+	const num1Precision = precision(num1);
+	const num2Precision = precision(num1);
+	const maxPrecision = Math.max(1, num1Precision, num2Precision);
+	const decimalCorrection = Math.pow(10, maxPrecision);
+	const intNum1 = num1 * decimalCorrection;
+	const intNum2 = num2 * decimalCorrection;
+	return (intNum1 + intNum2) / decimalCorrection;
+}
+
+export const safeSubtraction = (num1, num2) => {
+	const num1Precision = precision(num1);
+	const num2Precision = precision(num1);
+	const maxPrecision = Math.max(1, num1Precision, num2Precision);
+	const decimalCorrection = Math.pow(10, maxPrecision);
+	const intNum1 = num1 * decimalCorrection;
+	const intNum2 = num2 * decimalCorrection;
+	return (intNum1 - intNum2) / decimalCorrection;
+}
+
 /**
  * Returns closer divisible that is higher than given number,
  * @param {Number} number
@@ -86,10 +106,7 @@ export const closestDivisibleLower = (number, divisor) => {
 	const intDivisor = divisor * decimalCorrection;
 
 	if (intNumber < 0) {
-		return (
-			-closestDivisibleHigher(Math.abs(intNumber), intDivisor) /
-			decimalCorrection
-		);
+		return -closestDivisibleHigher(Math.abs(number), divisor);
 	} else {
 		return (intNumber - (intNumber % intDivisor)) / decimalCorrection;
 	}
@@ -275,7 +292,7 @@ export const intersectTile = (point, gridSize, fixIntegrity = true) => {
 	let snappedLonInside;
 	const pointLonOnTopBorder = lon === gridConstants.LEVEL_BOUNDARIES[1][0];
 	if (pointLonOnTopBorder) {
-		snappedLonInside = lon - gridSize;
+		snappedLonInside = safeSubtraction(lon, gridSize);
 	} else {
 		snappedLonInside = closestDivisibleLower(lon, gridSize);
 	}
@@ -283,7 +300,7 @@ export const intersectTile = (point, gridSize, fixIntegrity = true) => {
 	let snappedLatInside;
 	const pointLatOnTopBorder = lat === gridConstants.LEVEL_BOUNDARIES[1][1];
 	if (pointLatOnTopBorder) {
-		snappedLatInside = lat - gridSize;
+		snappedLatInside = safeSubtraction(lat, gridSize);
 	} else {
 		//move lat to positive sector before call closestDivisibleLower
 		snappedLatInside = closestDivisibleLower(lat + 90, gridSize) - 90;
@@ -331,11 +348,11 @@ export const getTileAsPolygon = (tile, gridSize, fixIntegrity = true) => {
 			case 0:
 				return [numericTile[0], numericTile[1]];
 			case 1:
-				return [numericTile[0], numericTile[1] + gridSize];
+				return [numericTile[0], safeSumming(numericTile[1], gridSize)];
 			case 2:
-				return [numericTile[0] + gridSize, numericTile[1] + gridSize];
+				return [ safeSumming(numericTile[0], gridSize),  safeSumming(numericTile[1], gridSize)];
 			case 3:
-				return [numericTile[0] + gridSize, numericTile[1]];
+				return [ safeSumming(numericTile[0], gridSize), numericTile[1]];
 			case 4:
 				return [numericTile[0], numericTile[1]];
 		}
