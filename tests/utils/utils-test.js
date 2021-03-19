@@ -85,6 +85,13 @@ describe('utils/utils', function () {
 				0.000000000000002
 			);
 			assert.equal(utils.closestDivisibleLower(0.1, 0), 0.1);
+			
+			assert.equal(utils.closestDivisibleLower(0.7709771100106658, 1.40625), 0);
+			assert.equal(utils.closestDivisibleLower(-0.7709771100106658, 1.40625), -1.40625);
+			assert.equal(utils.closestDivisibleLower(-1.40625, 1.40625), -1.40625);
+			assert.equal(utils.closestDivisibleLower(-1.40626, 1.40625), -2.8125);
+			assert.equal(utils.closestDivisibleLower(1.40625, 1.40625), 1.40625);
+			assert.equal(utils.closestDivisibleLower(1.40626, 1.40625), 1.40625);
 		});
 	});
 
@@ -121,6 +128,12 @@ describe('utils/utils', function () {
 			assert.deepEqual(utils.intersectTile([-180, -90], 180), [-180, -90]);
 			assert.deepEqual(utils.intersectTile([0, -90], 180), [0, -90]);
 			assert.deepEqual(utils.intersectTile([180, -90], 180), [0, -90]);
+			assert.deepEqual(utils.intersectTile([-0.7709771100106658, 45.5409891121946], 1.40625, true), [-1.40625, 45]);			
+			assert.deepEqual(utils.intersectTile([0.7709771100106658, 45.5409891121946], 1.40625, true), [0, 45]);			
+			assert.deepEqual(utils.intersectTile([1.40625, 45.5409891121946], 1.40625, true), [1.40625, 45]);			
+			assert.deepEqual(utils.intersectTile([-1.40625, 45.5409891121946], 1.40625, true), [-1.40625, 45]);
+			assert.deepEqual(utils.intersectTile([-1.5, 45.5409891121946], 1.40625, true), [-2.8125, 45]);
+			assert.deepEqual(utils.intersectTile([1.5, 45.5409891121946], 1.40625, true), [1.40625, 45]);
 		});
 
 		it('Throw error, coordinates does not lies in extent', function () {
