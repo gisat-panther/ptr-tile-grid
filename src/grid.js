@@ -57,8 +57,9 @@ export const getGridForLevelAndExtent = (
 			tileLat <= rightTopTile[1];
 			tileLat = safeSumming(tileLat, gridSize)
 		) {
-			let row = [];
-			const crossMeridian = safeSubtraction(rightTopTile[0], leftBottomTile[0]) <= -180;
+						let row = [];
+			const crossMeridian =
+				safeSubtraction(rightTopTile[0], leftBottomTile[0]) <= -180;
 			if (crossMeridian) {
 				//generate tile to meridian
 				for (

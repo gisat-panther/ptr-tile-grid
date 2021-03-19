@@ -164,42 +164,47 @@ describe('grid/grid', function () {
 
 	describe('getTileGrid', function () {
 		it('Check if returned polygon is correct for given tile', function () {
-			
-			const mapWidth = 810.5499877929688
-			const mapHeight =764
-			const levelBoxRange = 600598.0379691155
-			const center = { lat: 46.924007100770275, lon: 3.2627686660155857 }
-			const tileGrid = grid.getTileGrid(mapWidth,
+			const mapWidth = 810.5499877929688;
+			const mapHeight = 764;
+			const levelBoxRange = 600598.0379691155;
+			const center = {lat: 46.924007100770275, lon: 3.2627686660155857};
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
 				mapHeight,
 				levelBoxRange,
 				center,
-				true);
+				true
+			);
 			assert.deepEqual(tileGrid, tilegrid_2);
 		});
 
 		it('Check if returned tilegrid has correct tiles', function () {
-			const mapWidth = 810.5499877929688
-			const mapHeight =764
-			const levelBoxRange = 600598.0379691155
-			const center = { lat: 49.91232450346397, lon: 1.6894303172424334 }
-			const tileGrid = grid.getTileGrid(mapWidth,
+			const mapWidth = 810.5499877929688;
+			const mapHeight = 764;
+			const levelBoxRange = 600598.0379691155;
+			const center = {lat: 49.91232450346397, lon: 1.6894303172424334};
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
 				mapHeight,
 				levelBoxRange,
 				center,
-				true);
+				true
+			);
 			assert.deepEqual(tileGrid, tilegrid_1);
 		});
 
 		it('Check if returned tilegrid has correct tiles _1', function () {
-			const mapWidth = 810.5499877929688
-			const mapHeight =764
-			const levelBoxRange = 600598.0379691155
-			const center = { lat: 48.40367941865281, lon: 3.68149954038823 }
-			const tileGrid = grid.getTileGrid(mapWidth,
+			const mapWidth = 810.5499877929688;
+			const mapHeight = 764;
+			const levelBoxRange = 600598.0379691155;
+			const center = {lat: 48.40367941865281, lon: 3.68149954038823};
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
 				mapHeight,
 				levelBoxRange,
 				center,
-				true);
+				true
+			);
 			assert.deepEqual(tileGrid, tilegrid_3);
 		});
 	});
