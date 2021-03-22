@@ -71,15 +71,14 @@ export const closestDivisibleHigher = (number, divisor) => {
 	const rest = intNumber % intDivisor;
 
 	if (intNumber < 0) {
-		return (
-			-closestDivisibleLower(Math.abs(intNumber), intDivisor) /
-			decimalCorrection
-		);
+		return -closestDivisibleLower(Math.abs(number), divisor);
 	} else {
 		if (rest !== 0) {
-			return (
-				(intNumber + intDivisor - (intNumber % intDivisor)) / decimalCorrection
-			);
+			if (intNumber < intDivisor) {
+				return intDivisor / decimalCorrection;
+			} else {
+				return (intNumber + intDivisor - rest) / decimalCorrection;
+			}
 		} else {
 			return intNumber / decimalCorrection;
 		}
