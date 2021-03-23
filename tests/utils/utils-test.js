@@ -40,7 +40,7 @@ describe('utils/utils', function () {
 			const level20size = utils.getGridSizeForLevel(20);
 			assert.equal(
 				utils.closestDivisibleHigher(5.000000000000000000001, level20size),
-				5.000152587890626
+				5.000152587890624
 			);
 			const level10size = utils.getGridSizeForLevel(10);
 			assert.equal(
@@ -55,6 +55,19 @@ describe('utils/utils', function () {
 			);
 
 			assert.equal(utils.closestDivisibleHigher(0.0000000001, 0), 0.0000000001);
+
+			assert.equal(
+				utils.closestDivisibleHigher(-24.236353660881438, 5.625),
+				-22.5
+			);
+
+			const level24size = utils.getGridSizeForLevel(24);
+			assert.equal(utils.closestDivisibleHigher(0, level24size), 0);
+
+			assert.equal(
+				utils.closestDivisibleHigher(0.0000108, level24size),
+				parseInt(BigInt(10728836059570312) * BigInt(2)) * 10e-22
+			);
 		});
 	});
 
@@ -104,6 +117,20 @@ describe('utils/utils', function () {
 			assert.equal(utils.closestDivisibleLower(-1.40626, 1.40625), -2.8125);
 			assert.equal(utils.closestDivisibleLower(1.40625, 1.40625), 1.40625);
 			assert.equal(utils.closestDivisibleLower(1.40626, 1.40625), 1.40625);
+
+			assert.equal(
+				utils.closestDivisibleLower(-24.236353660881438, 5.625),
+				-28.125
+			);
+
+			const level24size = utils.getGridSizeForLevel(24);
+			assert.equal(utils.closestDivisibleLower(0, level24size), 0);
+
+			assert.equal(
+				// utils.closestDivisibleLower(0.000010728836059570313, level24size),
+				utils.closestDivisibleLower(0.0000108, level24size),
+				0.000010728836059570312
+			);
 		});
 	});
 

@@ -64,23 +64,26 @@ export const closestDivisibleHigher = (number, divisor) => {
 	const divisorPrecision = precision(divisor);
 
 	const maxPrecision = Math.max(1, numberPrecision, divisorPrecision);
-	const decimalCorrection = Math.pow(10, maxPrecision);
-	const intNumber = number * decimalCorrection;
-	const intDivisor = divisor * decimalCorrection;
+	const intDecimalCorrection = Math.pow(10, maxPrecision);
+	const bigIntNumber = BigInt(Math.round(number * intDecimalCorrection));
+	const bigIntDivisor = BigInt(divisor * intDecimalCorrection);
 
-	const rest = intNumber % intDivisor;
+	const bigIntRest = bigIntNumber % bigIntDivisor;
 
-	if (intNumber < 0) {
+	if (bigIntNumber < 0) {
 		return -closestDivisibleLower(Math.abs(number), divisor);
 	} else {
-		if (rest !== 0) {
-			if (intNumber < intDivisor) {
-				return intDivisor / decimalCorrection;
+		if (bigIntRest !== BigInt(0)) {
+			if (bigIntNumber < bigIntDivisor) {
+				return parseInt(bigIntDivisor) / intDecimalCorrection;
 			} else {
-				return (intNumber + intDivisor - rest) / decimalCorrection;
+				return (
+					parseInt(bigIntNumber + bigIntDivisor - bigIntRest) /
+					intDecimalCorrection
+				);
 			}
 		} else {
-			return intNumber / decimalCorrection;
+			return parseInt(bigIntNumber) / intDecimalCorrection;
 		}
 	}
 };
@@ -100,14 +103,17 @@ export const closestDivisibleLower = (number, divisor) => {
 	const divisorPrecision = precision(divisor);
 
 	const maxPrecision = Math.max(1, numberPrecision, divisorPrecision);
-	const decimalCorrection = Math.pow(10, maxPrecision);
-	const intNumber = number * decimalCorrection;
-	const intDivisor = divisor * decimalCorrection;
+	const intDecimalCorrection = Math.pow(10, maxPrecision);
+	const bigIntNumber = BigInt(Math.round(number * intDecimalCorrection));
+	const bigIntDivisor = BigInt(divisor * intDecimalCorrection);
 
-	if (intNumber < 0) {
+	if (bigIntNumber < BigInt(0)) {
 		return -closestDivisibleHigher(Math.abs(number), divisor);
 	} else {
-		return (intNumber - (intNumber % intDivisor)) / decimalCorrection;
+		return (
+			parseInt(bigIntNumber - (bigIntNumber % bigIntDivisor)) /
+			intDecimalCorrection
+		);
 	}
 };
 
