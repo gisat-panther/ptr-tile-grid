@@ -1,3 +1,15 @@
+# v0.0.7 (Mon Mar 22 2021)
+
+#### 🐾 Patch
+
+- Fix/math operations [#20](https://github.com/gisat-panther/ptr-tile-grid/pull/20) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v0.0.6 (Fri Mar 19 2021)
 
 #### 🐾 Patch
