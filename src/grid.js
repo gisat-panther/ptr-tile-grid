@@ -1,4 +1,4 @@
-import {map as mapUtils} from '@gisatcz/ptr-utils';
+import {map as mapUtils, utils} from '@gisatcz/ptr-utils';
 import {mapConstants} from '@gisatcz/ptr-core';
 
 import gridConstants from './constants/grid';
@@ -12,6 +12,8 @@ import {
 	getGridSizeForLevel,
 	safeSumming,
 	safeSubtraction,
+	roundCoordinate,
+	roundPoint,
 } from './utils';
 
 const tileCache = createCache();
@@ -67,7 +69,7 @@ export const getGridForLevelAndExtent = (
 					safeSumming(tileLon, gridSize) <= 180;
 					tileLon = safeSumming(tileLon, gridSize)
 				) {
-					row = [...row, [tileLon, tileLat]];
+					row = [...row, roundPoint([tileLon, tileLat])];
 				}
 				//generate tile from meridian
 				for (
@@ -75,7 +77,7 @@ export const getGridForLevelAndExtent = (
 					tileLon <= rightTopTile[0];
 					tileLon = safeSumming(tileLon, gridSize)
 				) {
-					row = [...row, [tileLon, tileLat]];
+					row = [...row, roundPoint([tileLon, tileLat])];
 				}
 			} else {
 				for (
@@ -83,7 +85,7 @@ export const getGridForLevelAndExtent = (
 					tileLon <= rightTopTile[0];
 					tileLon = safeSumming(tileLon, gridSize)
 				) {
-					row = [...row, [tileLon, tileLat]];
+					row = [...row, roundPoint([tileLon, tileLat])];
 				}
 			}
 
@@ -180,8 +182,8 @@ export const getTileGrid = (width, height, boxRange, center, fixIntegrity) => {
 export const getCenterOfTile = (level, tile) => {
 	if (level && tile) {
 		const tileSize = getGridSizeForLevel(level);
-		const lon = safeSumming(tile[0], tileSize / 2);
-		const lat = safeSumming(tile[1], tileSize / 2);
+		const lon = roundCoordinate(safeSumming(tile[0], tileSize / 2));
+		const lat = roundCoordinate(safeSumming(tile[1], tileSize / 2));
 
 		return {
 			lat,

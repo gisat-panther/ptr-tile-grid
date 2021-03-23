@@ -1,7 +1,13 @@
 import {assert} from 'chai';
 
 import {grid} from '../../src/';
-import {tilegrid_1, tilegrid_2, tilegrid_3} from './mockTilegridData';
+import {
+	tilegrid_1,
+	tilegrid_2,
+	tilegrid_3,
+	tilegrid_4,
+	tilegrid_5,
+} from './mockTilegridData';
 
 describe('grid/grid', function () {
 	describe('getOrigin', function () {
@@ -206,6 +212,36 @@ describe('grid/grid', function () {
 				true
 			);
 			assert.deepEqual(tileGrid, tilegrid_3);
+		});
+
+		it('Check if returned tilegrid has correct tiles _2, it check BigInt in closestDivisibleHigher.', function () {
+			const mapWidth = 896;
+			const mapHeight = 763;
+			const levelBoxRange = 2399250.654295472;
+			const center = {lat: 47.23907760550141, lon: -4.548861866565056};
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
+				mapHeight,
+				levelBoxRange,
+				center,
+				true
+			);
+			assert.deepEqual(tileGrid, tilegrid_4);
+		});
+
+		it('Check if returned tilegrid for lavel 23 has correct tiles and each coordinate has maximum 13 decimals.', function () {
+			const mapWidth = 896;
+			const mapHeight = 763;
+			const levelBoxRange = 10;
+			const center = {lat: 47.23907760550141, lon: -4.548861866565056};
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
+				mapHeight,
+				levelBoxRange,
+				center,
+				true
+			);
+			assert.deepEqual(tileGrid, tilegrid_5);
 		});
 	});
 });

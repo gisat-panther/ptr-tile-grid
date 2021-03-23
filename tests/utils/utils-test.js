@@ -40,7 +40,7 @@ describe('utils/utils', function () {
 			const level20size = utils.getGridSizeForLevel(20);
 			assert.equal(
 				utils.closestDivisibleHigher(5.000000000000000000001, level20size),
-				5.000152587890626
+				5.000152587890624
 			);
 			const level10size = utils.getGridSizeForLevel(10);
 			assert.equal(
@@ -55,6 +55,19 @@ describe('utils/utils', function () {
 			);
 
 			assert.equal(utils.closestDivisibleHigher(0.0000000001, 0), 0.0000000001);
+
+			assert.equal(
+				utils.closestDivisibleHigher(-24.236353660881438, 5.625),
+				-22.5
+			);
+
+			const level24size = utils.getGridSizeForLevel(24);
+			assert.equal(utils.closestDivisibleHigher(0, level24size), 0);
+
+			assert.equal(
+				utils.closestDivisibleHigher(0.0000108, level24size),
+				0.000021457672119140625
+			);
 		});
 	});
 
@@ -104,6 +117,20 @@ describe('utils/utils', function () {
 			assert.equal(utils.closestDivisibleLower(-1.40626, 1.40625), -2.8125);
 			assert.equal(utils.closestDivisibleLower(1.40625, 1.40625), 1.40625);
 			assert.equal(utils.closestDivisibleLower(1.40626, 1.40625), 1.40625);
+
+			assert.equal(
+				utils.closestDivisibleLower(-24.236353660881438, 5.625),
+				-28.125
+			);
+
+			const level24size = utils.getGridSizeForLevel(24);
+			assert.equal(utils.closestDivisibleLower(0, level24size), 0);
+
+			assert.equal(
+				// utils.closestDivisibleLower(0.000010728836059570313, level24size),
+				utils.closestDivisibleLower(0.0000108, level24size),
+				0.000010728836059570312
+			);
 		});
 	});
 
@@ -523,8 +550,8 @@ describe('utils/utils', function () {
 				50
 			);
 			assert.deepEqual(extent1, [
-				[-179.54753018865017, 88.99044398980956],
-				[-178.45246981134983, 89.00955601019021],
+				[-179.5475301886502, 88.9904439898096],
+				[-178.4524698113498, 89.0095560101902],
 			]);
 		});
 
@@ -536,8 +563,8 @@ describe('utils/utils', function () {
 				50
 			);
 			assert.deepEqual(extent2, [
-				[91.04360634295034, -39.93216059187305],
-				[-89.0436063429504, 40.06783940812695],
+				[91.0436063429503, -39.932160591873],
+				[-89.0436063429504, 40.067839408127],
 			]);
 
 			const extent1 = utils.getExtentAroundCoordinates(
@@ -548,8 +575,8 @@ describe('utils/utils', function () {
 				true
 			);
 			assert.deepEqual(extent1, [
-				[89.0436063429504, -39.93216059187305],
-				[-91.0436063429504, 40.06783940812695],
+				[89.0436063429504, -39.932160591873],
+				[-91.0436063429504, 40.067839408127],
 			]);
 		});
 
@@ -598,20 +625,20 @@ describe('utils/utils', function () {
 				50
 			);
 			assert.deepEqual(extent1, [
-				[-0.5475468511916786, -0.5475468511916786],
-				[0.5475468511916786, 0.5475468511916786],
+				[-0.5475468511917, -0.5475468511917],
+				[0.5475468511917, 0.5475468511917],
 			]);
 			assert.deepEqual(extent2, [
-				[-1.0950937023833571, -0.5475468511916786],
-				[1.0950937023833571, 0.5475468511916786],
+				[-1.0950937023834, -0.5475468511917],
+				[1.0950937023834, 0.5475468511917],
 			]);
 			assert.deepEqual(extent3, [
-				[-0.5475468511916786, -1.0950937023833571],
-				[0.5475468511916786, 1.0950937023833571],
+				[-0.5475468511917, -1.0950937023834],
+				[0.5475468511917, 1.0950937023834],
 			]);
 			assert.deepEqual(extent3, [
-				[-0.5475468511916786, -1.0950937023833571],
-				[0.5475468511916786, 1.0950937023833571],
+				[-0.5475468511917, -1.0950937023834],
+				[0.5475468511917, 1.0950937023834],
 			]);
 		});
 	});
