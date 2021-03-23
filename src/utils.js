@@ -2,6 +2,39 @@ import gridConstants from './constants/grid';
 import LatLon from './dmsHelpers';
 
 /**
+ * Round coordinate on 13 decimals
+ * @param {*} coordinate
+ */
+export const roundCoordinate = coordinate => {
+	// Cause JS imprecize calculation with numbers we have to round coordinates
+	// JS use 64-bit storage fot numbers, so 13 decimals left.
+	// https://javascript.info/number#imprecise-calculations
+	const decimals = 13;
+	if (typeof coordinate == 'number' && isFinite(coordinate)) {
+		//round coordinate and convert it to the number
+		return +coordinate.toFixed(decimals);
+	} else {
+		return null;
+	}
+};
+
+/**
+ * Round point coordinates to 13 decimals
+ */
+export const roundPoint = point => {
+	if (
+		point &&
+		point.length === 2 &&
+		typeof point[0] == 'number' &&
+		typeof point[1] == 'number'
+	) {
+		return point.map(roundCoordinate);
+	} else {
+		return null;
+	}
+};
+
+/**
  *
  * @param {Array.<Array.<Longitude, Latitude>>} extent Extent is defined by left bottom and right top lon/lat.
  * @returns {string}
@@ -126,12 +159,16 @@ export const closestDivisibleLower = (number, divisor) => {
  * @return {boolean} The x, y values are contained in the extent.
  */
 export const containsXY = (extent, point) => {
-	return (
-		extent[0][0] <= point[0] &&
-		point[0] <= extent[1][0] &&
-		extent[0][1] <= point[1] &&
-		point[1] <= extent[1][1]
-	);
+	if (extent && point) {
+		return (
+			extent[0][0] <= point[0] &&
+			point[0] <= extent[1][0] &&
+			extent[0][1] <= point[1] &&
+			point[1] <= extent[1][1]
+		);
+	} else {
+		return false;
+	}
 };
 
 /**
@@ -164,6 +201,7 @@ export const containsExtent = (extent1, extent2) => {
  */
 export const ensurePointIntegrity = point => {
 	if (point) {
+		point = roundPoint(point);
 		if (point[1]) {
 			if (point[1] > 90) {
 				point[1] = 90;
@@ -199,6 +237,7 @@ export const ensurePointIntegrity = point => {
 export const ensurePointInWorldBBox = point => {
 	let newPoint;
 	if (point) {
+		point = roundPoint(point);
 		newPoint = [point[0], point[1]];
 		if (newPoint[1]) {
 			if (newPoint[1] > 90) {
@@ -249,6 +288,7 @@ export const ensureExtentInWorldBBox = extent => {
  * @return bool
  */
 export const checkPointIntegrity = point => {
+	point = roundPoint(point);
 	if (containsXY(gridConstants.LEVEL_BOUNDARIES, point)) {
 		return true;
 	} else {
@@ -310,8 +350,7 @@ export const intersectTile = (point, gridSize, fixIntegrity = true) => {
 		//move lat to positive sector before call closestDivisibleLower
 		snappedLatInside = closestDivisibleLower(lat + 90, gridSize) - 90;
 	}
-
-	return [snappedLonInside, snappedLatInside];
+	return roundPoint([snappedLonInside, snappedLatInside]);
 };
 
 /**
@@ -353,14 +392,20 @@ export const getTileAsPolygon = (tile, gridSize, fixIntegrity = true) => {
 			case 0:
 				return [numericTile[0], numericTile[1]];
 			case 1:
-				return [numericTile[0], safeSumming(numericTile[1], gridSize)];
+				return [
+					numericTile[0],
+					roundCoordinate(safeSumming(numericTile[1], gridSize)),
+				];
 			case 2:
 				return [
-					safeSumming(numericTile[0], gridSize),
-					safeSumming(numericTile[1], gridSize),
+					roundCoordinate(safeSumming(numericTile[0], gridSize)),
+					roundCoordinate(safeSumming(numericTile[1], gridSize)),
 				];
 			case 3:
-				return [safeSumming(numericTile[0], gridSize), numericTile[1]];
+				return [
+					roundCoordinate(safeSumming(numericTile[0], gridSize)),
+					numericTile[1],
+				];
 			case 4:
 				return [numericTile[0], numericTile[1]];
 		}
@@ -523,8 +568,8 @@ export const getExtentAroundCoordinates = (
 		90
 	);
 	const extent = [
-		[westBorder.lon, southBorder.lat],
-		[eastBorder.lon, northBorder.lat],
+		roundPoint([westBorder.lon, southBorder.lat]),
+		roundPoint([eastBorder.lon, northBorder.lat]),
 	];
 	const intersectedExtent = getIntersection(
 		extent,

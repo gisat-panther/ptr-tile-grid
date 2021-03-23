@@ -218,7 +218,6 @@ describe('grid/grid', function () {
 			const mapHeight = 763;
 			const levelBoxRange = 2399250.654295472;
 			const center = {lat: 47.23907760550141, lon: -4.548861866565056};
-			debugger;
 			const tileGrid = grid.getTileGrid(
 				mapWidth,
 				mapHeight,
