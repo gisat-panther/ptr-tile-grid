@@ -6,6 +6,7 @@ import {
 	tilegrid_2,
 	tilegrid_3,
 	tilegrid_4,
+	tilegrid_5,
 } from './mockTilegridData';
 
 describe('grid/grid', function () {
@@ -226,6 +227,21 @@ describe('grid/grid', function () {
 				true
 			);
 			assert.deepEqual(tileGrid, tilegrid_4);
+		});
+
+		it('Check if returned tilegrid for lavel 23 has correct tiles and each coordinate has maximum 13 decimals.', function () {
+			const mapWidth = 896;
+			const mapHeight = 763;
+			const levelBoxRange = 10;
+			const center = {lat: 47.23907760550141, lon: -4.548861866565056};
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
+				mapHeight,
+				levelBoxRange,
+				center,
+				true
+			);
+			assert.deepEqual(tileGrid, tilegrid_5);
 		});
 	});
 });
