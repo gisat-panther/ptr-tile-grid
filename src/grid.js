@@ -20,7 +20,7 @@ const tileCache = createCache();
 
 /**
  * Return grid for given level and extent. If no extent defined, global extend is used.
- * @param {Number} level Level between {0 - 26}
+ * @param {Number} level Level between {0 - 24}
  * @param {Array.<Array>} extent Restricted extent. Default extent is all globe. Extent is defined by left bottom and right top lon/lat.
  * @param {bool} fixIntegrity Ensure that extent will not overfloat antimeridian. Example: longitude -190 is changed to -180.
  * @return {Array.<Array.<Array.<Longitude, Latitude>>>} LevelTiles defined as array of rows. Each row contains Tiles.
@@ -98,6 +98,109 @@ export const getGridForLevelAndExtent = (
 		tileCache.set(intersectionId, grid);
 		return grid;
 	}
+};
+
+/**
+ * Call callback on each tile from grid defined by given level and extent. If no extent defined, global extend is used.
+ * @param {Number} level Level between {0 - 24}
+ * @param {Array.<Array>} extent Restricted extent. Default extent is all globe. Extent is defined by left bottom and right top lon/lat.
+ * @param {function} callback Function called on each tile.
+ * @param {bool} fixIntegrity Ensure that extent will not overfloat antimeridian. Example: longitude -190 is changed to -180.
+ */
+export const forEachTileInGridByLevelAndExtent = (
+	level = 0,
+	extent = gridConstants.LEVEL_BOUNDARIES,
+	callback,
+	fixIntegrity = true
+) => {
+	//throw error if extent does not fit integrity check
+	try {
+		checkExtentIntegrity(extent);
+	} catch (error) {
+		if (fixIntegrity) {
+			extent = ensureExtentInWorldBBox(extent);
+		} else {
+			throw error;
+		}
+	}
+
+	const gridSize = getGridSizeForLevel(level);
+
+	const leftBottomTile = intersectTile(extent[0], gridSize, fixIntegrity);
+	const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity);
+	for (
+		let tileLat = leftBottomTile[1];
+		tileLat <= rightTopTile[1];
+		tileLat = safeSumming(tileLat, gridSize)
+	) {
+		const crossMeridian =
+			safeSubtraction(rightTopTile[0], leftBottomTile[0]) <= -180;
+		if (crossMeridian) {
+			//generate tile to meridian
+			for (
+				let tileLon = leftBottomTile[0];
+				safeSumming(tileLon, gridSize) <= 180;
+				tileLon = safeSumming(tileLon, gridSize)
+			) {
+				callback(roundPoint([tileLon, tileLat]));
+			}
+			//generate tile from meridian
+			for (
+				let tileLon = -180;
+				tileLon <= rightTopTile[0];
+				tileLon = safeSumming(tileLon, gridSize)
+			) {
+				callback(roundPoint([tileLon, tileLat]));
+			}
+		} else {
+			for (
+				let tileLon = leftBottomTile[0];
+				tileLon <= rightTopTile[0];
+				tileLon = safeSumming(tileLon, gridSize)
+			) {
+				callback(roundPoint([tileLon, tileLat]));
+			}
+		}
+	}
+};
+
+/**
+ * Calculate number of tiles for grid defined by given level and extent. If no extent defined, global extend is used.
+ * @param {Number} level Level between {0 - 24}
+ * @param {Array.<Array>} extent Restricted extent. Default extent is all globe. Extent is defined by left bottom and right top lon/lat.
+ * @param {bool} fixIntegrity Ensure that extent will not overfloat antimeridian. Example: longitude -190 is changed to -180.
+ * @returns {Number}
+ */
+export const getTilesCountForGridByLevelAndExtent = (
+	level = 0,
+	extent = gridConstants.LEVEL_BOUNDARIES,
+	fixIntegrity = true
+) => {
+	//throw error if extent does not fit integrity check
+	try {
+		checkExtentIntegrity(extent);
+	} catch (error) {
+		if (fixIntegrity) {
+			extent = ensureExtentInWorldBBox(extent);
+		} else {
+			throw error;
+		}
+	}
+
+	const gridSize = getGridSizeForLevel(level);
+
+	const leftBottomTile = intersectTile(extent[0], gridSize, fixIntegrity);
+	const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity);
+	// Floor and round is important for getting integer in big zooms.
+	const numberOfRows = Math.floor(
+		Math.round(safeSubtraction(rightTopTile[1], leftBottomTile[1]) / gridSize) +
+			1
+	);
+	const numberOfColumns = Math.floor(
+		Math.round(safeSubtraction(rightTopTile[0], leftBottomTile[0]) / gridSize) +
+			1
+	);
+	return numberOfRows * numberOfColumns;
 };
 
 /**

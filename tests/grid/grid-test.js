@@ -92,9 +92,7 @@ describe('grid/grid', function () {
 				],
 			]);
 		});
-	});
 
-	describe('getGridForLevelAndExtent', function () {
 		it('Returns grid for given level and extent', function () {
 			const grid0 = grid.getGridForLevelAndExtent(0, [
 				[-180, -90],
@@ -128,6 +126,107 @@ describe('grid/grid', function () {
 					[0, -45],
 				],
 			]);
+		});
+
+		it('Returns grid for given level and extent for France anf level 14', function () {
+			this.timeout(10000);
+			const grid14France = grid.getGridForLevelAndExtent(14, [
+				[-5.14375114, 41.33375168],
+				[9.56041622, 51.08939743],
+			]);
+			assert.equal(grid14France.length, 889); //number of rows
+			assert.equal(grid14France[0].length, 1340); //number of columns
+		});
+	});
+
+	describe('forEachTileInGridByLevelAndExtent', function () {
+		it('Run callback on each tile on grid for given level and extent for France and level 14', function () {
+			this.timeout(10000);
+			let count = 0;
+			grid.forEachTileInGridByLevelAndExtent(
+				14,
+				[
+					[-1, 41],
+					[1, 42],
+				],
+				(tile, tileSize) => {
+					count++;
+				}
+			);
+			assert.equal(count, 16928); //number of tiles
+		});
+
+		it('Run callback on each tile on grid for given level and extent for France and level 16', function () {
+			this.timeout(10000);
+			let count = 0;
+			grid.forEachTileInGridByLevelAndExtent(
+				16,
+				[
+					[-1, 41],
+					[1, 42],
+				],
+				(tile, tileSize) => {
+					count++;
+				}
+			);
+			assert.equal(count, 266450); //number of tiles
+		});
+
+		it('Run callback on each tile on grid for given level and extent for France and level 17', function () {
+			this.timeout(10000);
+			let count = 0;
+			grid.forEachTileInGridByLevelAndExtent(
+				17,
+				[
+					[-1, 41],
+					[1, 42],
+				],
+				(tile, tileSize) => {
+					count++;
+				}
+			);
+			assert.equal(count, 1062153); //number of tiles
+		});
+	});
+
+	describe('getTilesCountForGridByLevelAndExtent', function () {
+		it('Get tiles count for grids.', function () {
+			const count = grid.getTilesCountForGridByLevelAndExtent(14, [
+				[-1, 41],
+				[1, 42],
+			]);
+			assert.equal(count, 16928); //number of tiles
+
+			const count2 = grid.getTilesCountForGridByLevelAndExtent(2, [
+				[-10, -10],
+				[10, 10],
+			]);
+			assert.equal(count2, 4); //number of tiles
+		});
+
+		it('Get tiles count for certain grids in maximum level', function () {
+			const count = grid.getTilesCountForGridByLevelAndExtent(24, [
+				[-1, 41],
+				[1, 42],
+			]);
+			assert.equal(count, 17375276112); //number of tiles
+
+			const count2 = grid.getTilesCountForGridByLevelAndExtent(24, [
+				[-10, -10],
+				[10, 10],
+			]);
+			assert.equal(count2, 3475003026496); //number of tiles
+		});
+
+		it('Get tiles count for whole grids', function () {
+			const levels = [...new Array(25)].map((_, i) => i);
+			const tilesCount = levels.reduce((acc, level) => {
+				return level === 0 ? [2] : [...acc, acc[acc.length - 1] * 4];
+			}, []);
+			levels.forEach(level => {
+				const count = grid.getTilesCountForGridByLevelAndExtent(level);
+				assert.equal(count, tilesCount[level]); //number of tiles
+			});
 		});
 	});
 
