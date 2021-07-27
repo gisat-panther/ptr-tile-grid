@@ -321,3 +321,44 @@ export const getParentTile = (level, tile) => {
 		return null;
 	}
 };
+
+/**
+ * Return child tiles for given level and tile
+ * @param level {number}
+ * @param tile {Array}
+ * @return {Array}
+ * TODO @vlavh1989 tests
+ */
+export const getChildTiles = (level, tile) => {
+	if (level && tile) {
+		const childLevel = level + 1;
+		const tileSizeOfChild = getGridSizeForLevel(childLevel);
+		const shift = tileSizeOfChild / 4;
+		const centerOfTile = getCenterOfTile(level, tile);
+		const topLeftTile = intersectTile(
+			[centerOfTile.lon - shift, centerOfTile.lat + shift],
+			tileSizeOfChild
+		);
+		const bottomLeftTile = intersectTile(
+			[centerOfTile.lon - shift, centerOfTile.lat - shift],
+			tileSizeOfChild
+		);
+		const topRightTile = intersectTile(
+			[centerOfTile.lon + shift, centerOfTile.lat + shift],
+			tileSizeOfChild
+		);
+		const bottomRightTile = intersectTile(
+			[centerOfTile.lon + shift, centerOfTile.lat - shift],
+			tileSizeOfChild
+		);
+
+		return [
+			{level: childLevel, tile: topLeftTile},
+			{level: childLevel, tile: bottomLeftTile},
+			{level: childLevel, tile: topRightTile},
+			{level: childLevel, tile: bottomRightTile},
+		];
+	} else {
+		return null;
+	}
+};
