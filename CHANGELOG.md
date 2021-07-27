@@ -1,3 +1,15 @@
+# v0.0.10 (Tue Jul 27 2021)
+
+#### 🐾 Patch
+
+- Feature/child tiles [#25](https://github.com/gisat-panther/ptr-tile-grid/pull/25) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v0.0.9 (Wed Apr 07 2021)
 
 #### 🐾 Patch
