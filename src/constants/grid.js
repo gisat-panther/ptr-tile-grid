@@ -41,4 +41,5 @@ export default {
 	LEVEL_BOUNDARIES,
 	PIXEL_TILE_SIZE,
 	resolutions,
+	levels,
 };

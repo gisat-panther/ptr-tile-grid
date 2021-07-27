@@ -27,9 +27,9 @@ describe('utils/roundPoint', function () {
 	});
 
 	it('Return null when try to round point with 15 decimals [5.666666666666666,5.666666666666666]', function () {
-		assert.deepEqual(utils.roundPoint([5.666666666666666, 5.666666666666666]), [
-			5.6666666666667,
-			5.6666666666667,
-		]);
+		assert.deepEqual(
+			utils.roundPoint([5.666666666666666, 5.666666666666666]),
+			[5.6666666666667, 5.6666666666667]
+		);
 	});
 });
