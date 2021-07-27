@@ -69,7 +69,7 @@ describe('getChildTiles', function () {
 	});
 
 	it('Returns null if given tile is from the last level', function () {
-		const level = 23;
+		const level = 24;
 		const tile = [0, 0];
 
 		assert.isNull(getChildTiles(level, tile));
