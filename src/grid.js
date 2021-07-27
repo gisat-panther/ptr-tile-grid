@@ -330,7 +330,7 @@ export const getParentTile = (level, tile) => {
  * TODO @vlavh1989 tests
  */
 export const getChildTiles = (level, tile) => {
-	if (level && tile) {
+	if (level < 23 && tile) {
 		const childLevel = level + 1;
 		const tileSizeOfChild = getGridSizeForLevel(childLevel);
 		const shift = tileSizeOfChild / 4;
