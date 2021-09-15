@@ -10,10 +10,10 @@ describe('tileAsArray', function () {
 	});
 
 	it('Convert string tile to array 90.00001,-180.00001', function () {
-		assert.deepStrictEqual(utils.tileAsArray('90.00001,-180.00001'), [
-			90.00001,
-			-180.00001,
-		]);
+		assert.deepStrictEqual(
+			utils.tileAsArray('90.00001,-180.00001'),
+			[90.00001, -180.00001]
+		);
 	});
 
 	it('Convert string tile to array 90.000000000000001,-180.000000000000001', function () {
@@ -41,17 +41,17 @@ describe('tileAsArray', function () {
 		assert.deepStrictEqual(utils.tileAsArray([90, -180]), [90, -180]);
 	});
 	it('Convert array tile to array [`90.001`,`-180.001`]', function () {
-		assert.deepStrictEqual(utils.tileAsArray(['90.001', '-180.001']), [
-			90.001,
-			-180.001,
-		]);
+		assert.deepStrictEqual(
+			utils.tileAsArray(['90.001', '-180.001']),
+			[90.001, -180.001]
+		);
 	});
 
 	it('Convert array tile to array [`90.001,-180.001`]', function () {
-		assert.deepStrictEqual(utils.tileAsArray(['90.001,-180.001']), [
-			90.001,
-			-180.001,
-		]);
+		assert.deepStrictEqual(
+			utils.tileAsArray(['90.001,-180.001']),
+			[90.001, -180.001]
+		);
 	});
 
 	it('Tryes to convert string `test` to array return null.', function () {
