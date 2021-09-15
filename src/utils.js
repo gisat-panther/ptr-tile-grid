@@ -1,4 +1,11 @@
+import {
+	isArray as _isArray,
+	isFinite as _isFinite,
+	without as _without,
+} from 'lodash';
+
 import gridConstants from './constants/grid';
+import {forEachTileInGridByLevelAndExtent} from './grid';
 import LatLon from './dmsHelpers';
 
 /**
@@ -312,14 +319,22 @@ export const checkExtentIntegrity = extent => {
 
 /**
  * Return intersected tile for given point and grid size.
- * If given point lies on top or  right side of gridSet border, return nearest tile from inside gridset.
+ * If given point lies on top or right side of gridSet border, return nearest tile from inside gridset.
  * Point belongs to tile if lies on bottom or left border of tile.
  * @param {Array.<Longitude, Latitude>} point
  * @param {Number} gridSize
  * @param {bool} fixIntegrity Ensure point position in world extent
+ * @param {bool} topRightCloseBorder default = true By default, if point lays on the border of the tiles,
+ * identify intersected tile as the one which has border on the right od on the top.
+ * This behaviour can be changed to the right/bottom by topRightCloseBorder=false.
  * @returns {Array.<Longitude, Latitude>}
  */
-export const intersectTile = (point, gridSize, fixIntegrity = true) => {
+export const intersectTile = (
+	point,
+	gridSize,
+	fixIntegrity = true,
+	topRightCloseBorder = false
+) => {
 	//throw error if point does not fit integrity check
 	try {
 		checkPointIntegrity(point);
@@ -333,22 +348,48 @@ export const intersectTile = (point, gridSize, fixIntegrity = true) => {
 
 	const lon = point[0];
 	const lat = point[1];
-
 	let snappedLonInside;
-	const pointLonOnTopBorder = lon === gridConstants.LEVEL_BOUNDARIES[1][0];
-	if (pointLonOnTopBorder) {
-		snappedLonInside = safeSubtraction(lon, gridSize);
+	const pointLonOnLeftBorder = lon === gridConstants.LEVEL_BOUNDARIES[0][0];
+	const pointLonOnRightBorder = lon === gridConstants.LEVEL_BOUNDARIES[1][0];
+	if (pointLonOnLeftBorder) {
+		snappedLonInside = lon;
+	} else if (!topRightCloseBorder && pointLonOnRightBorder) {
+		snappedLonInside = lon - gridSize;
 	} else {
-		snappedLonInside = closestDivisibleLower(lon, gridSize);
+		//Check if point is on the Lontitude grid
+		const isOnGridLonNet = lon % gridSize === 0;
+		if (isOnGridLonNet) {
+			if (topRightCloseBorder) {
+				snappedLonInside = lon - gridSize;
+			} else {
+				snappedLonInside = lon;
+			}
+		} else {
+			//point is inside tile
+			snappedLonInside = closestDivisibleLower(lon, gridSize);
+		}
 	}
 
 	let snappedLatInside;
-	const pointLatOnTopBorder = lat === gridConstants.LEVEL_BOUNDARIES[1][1];
-	if (pointLatOnTopBorder) {
-		snappedLatInside = safeSubtraction(lat, gridSize);
+	const pointLatOnBottomBorder = lat === gridConstants.LEVEL_BOUNDARIES[0][1];
+	if (pointLatOnBottomBorder) {
+		snappedLatInside = lat;
 	} else {
-		//move lat to positive sector before call closestDivisibleLower
-		snappedLatInside = closestDivisibleLower(lat + 90, gridSize) - 90;
+		//Check if point is on the Latitude grid
+		const isOnGridLatNet = lat % gridSize === 0;
+		if (gridSize === 180 && (lat === 90 || lat === 0 || lat === -90)) {
+			snappedLatInside = -90;
+		} else if (isOnGridLatNet) {
+			//tak je na top hranicích
+			if (topRightCloseBorder) {
+				snappedLatInside = lat - gridSize;
+			} else {
+				snappedLatInside = lat;
+			}
+		} else {
+			//point is inside tile
+			snappedLatInside = closestDivisibleLower(lat + 90, gridSize) - 90;
+		}
 	}
 	return roundPoint([snappedLonInside, snappedLatInside]);
 };
@@ -579,5 +620,241 @@ export const getExtentAroundCoordinates = (
 		return ensureExtentIntegrity(intersectedExtent);
 	} else {
 		return intersectedExtent;
+	}
+};
+
+/**
+ * Converts tile as a string to array
+ * @param {Array|string} tile
+ * @returns {Array} Tile defined by Numbers in array
+ */
+export function tileAsArray(tile) {
+	if (
+		typeof tile === 'string' &&
+		tile.split(',').length > 1 &&
+		tile.split(',').every(i => _isFinite(parseFloat(i)))
+	) {
+		return tile.split(',').map(parseFloat);
+	} else if (
+		_isArray(tile) &&
+		tile.length !== 1 &&
+		tile.every(i => _isFinite(parseFloat(i)))
+	) {
+		return tile.map(parseFloat);
+	} else if (_isArray(tile) && tile.length === 1) {
+		return tileAsArray(tile[0]);
+	} else {
+		return null;
+	}
+}
+
+/**
+ * Finite numbers are transformed to the decimal format and to the string.
+ * Example: 2e-2 -> "0.02"
+ * Example: 0.02 -> "0.02"
+ * @param {Number} number
+ * @returns {string?}
+ */
+export const getNumberInDecimalString = number => {
+	if (!Number.isFinite(number)) {
+		return null;
+	}
+
+	const numberPrecision = precision(number);
+	return number.toFixed(numberPrecision);
+};
+
+/**
+ * Returns array of strings representing given tile
+ * @param {Array|string} tile
+ * @returns {Array}
+ */
+export const tileAsStringArray = tile => {
+	if (
+		_isArray(tile) &&
+		typeof tile[0] === 'string' &&
+		typeof tile[1] === 'string'
+	) {
+		return tile;
+	} else if (_isArray(tile)) {
+		const arrTile = tileAsArray(tile);
+		if (arrTile) {
+			// return arrTile.map(getNumberInDecimalString).join(',');
+			return arrTile.map(getNumberInDecimalString);
+		} else {
+			return null;
+		}
+	} else {
+		return null;
+	}
+};
+
+/**
+ * Returns string representing given tile
+ * @param {Array|string} tile
+ * @returns {string}
+ */
+export const tileAsString = tile => {
+	if (typeof tile === 'string') {
+		return tile;
+	} else {
+		const stringTile = tileAsStringArray(tile);
+		return stringTile ? stringTile.join(',') : null;
+	}
+};
+
+export const getUnionTiles = (tilesA = [], tilesB = []) => {
+	const tilesAlength = tilesA.length;
+	const tilesBlength = tilesB.length;
+	let smallerTiles, biggerTiles;
+	if (tilesAlength <= tilesBlength) {
+		smallerTiles = new Set([...tilesA.map(tileAsString)]);
+		biggerTiles = new Set([...tilesB.map(tileAsString)]);
+	} else {
+		smallerTiles = new Set([...tilesB.map(tileAsString)]);
+		biggerTiles = new Set([...tilesA.map(tileAsString)]);
+	}
+
+	const unionTiles = [];
+
+	smallerTiles.forEach(t => {
+		if (biggerTiles.has(t)) {
+			unionTiles.push(t);
+		}
+	});
+
+	return unionTiles;
+};
+
+export const getExtentOfTile = (level, tile) => {
+	if (level <= gridConstants.levels) {
+		const arrayTile = tileAsArray(tile);
+		const sizeOfTileOnLevel = getGridSizeForLevel(level);
+		const extent = [
+			arrayTile,
+			[arrayTile[0] + sizeOfTileOnLevel, arrayTile[1] + sizeOfTileOnLevel],
+		];
+		return extent;
+	} else {
+		return null;
+	}
+};
+
+export const getLoadedTilesByDirection = (
+	level,
+	wanted,
+	loaded,
+	direction,
+	dept
+) => {
+	let missingTiles = [...wanted.map(tileAsString)];
+	const missingTilesInLevels = {};
+	const loadedTiles = {};
+
+	let nextLevel = null;
+	let shouldProceedNextLevel = null;
+	let getNextLevel = null;
+	if (direction === 'LOWER') {
+		nextLevel = level + 1;
+		shouldProceedNextLevel = () =>
+			nextLevel <= level + dept &&
+			nextLevel <= gridConstants.levels &&
+			missingTiles.length > 0;
+		getNextLevel = () => ++nextLevel;
+	} else if (direction === 'HIGHER') {
+		nextLevel = level - 1;
+		shouldProceedNextLevel = () =>
+			nextLevel >= level - dept && nextLevel >= 0 && missingTiles.length > 0;
+		getNextLevel = () => --nextLevel;
+	} else {
+		//direction undefined
+		return null;
+	}
+	while (shouldProceedNextLevel()) {
+		missingTilesInLevels[nextLevel] = missingTiles.map(tile => {
+			const tilesInExtent = [];
+			const tileExtent = getExtentOfTile(level, tile);
+			forEachTileInGridByLevelAndExtent(nextLevel, tileExtent, t => {
+				tilesInExtent.push(tileAsString(t));
+			});
+			return [tile, tilesInExtent];
+		});
+		if (loaded[nextLevel]) {
+			for (let i = missingTilesInLevels[nextLevel].length - 1; i >= 0; i--) {
+				const [missingTopTile, missingTilesForLevel] = missingTilesInLevels[
+					nextLevel
+				][i];
+				if (loaded[nextLevel].length >= missingTilesForLevel.length) {
+					// get same tiles from loaded and requested
+					const unionForLevel = getUnionTiles(
+						loaded[nextLevel],
+						missingTilesForLevel
+					);
+					// union tiles covers all tiles from missing tiles
+					if (unionForLevel.length === missingTilesForLevel.length) {
+						// remove from missingTilesInLevels[nextLevel]
+						const index = missingTilesInLevels[nextLevel].findIndex(
+							pair => pair[0] === missingTopTile
+						);
+						missingTilesInLevels[nextLevel].splice(index, 1);
+
+						// remove from missingTiles
+						// clear this tile for farther comparison
+						missingTiles = _without(missingTiles, missingTopTile);
+
+						//save tiles that covers requester tile on propriet level
+						loadedTiles[missingTopTile] = {
+							level: nextLevel,
+							tiles: missingTilesForLevel,
+						};
+					}
+				}
+			}
+		}
+		getNextLevel();
+	}
+	return loadedTiles;
+};
+
+/**
+ *
+ * @param {Number} level
+ * @param {Array} wanted
+ * @param {Object} loaded
+ * @param {string} direction One of level type [SAME, LOWER, HIGHER]
+ */
+export const getLoadedTiles = (
+	level,
+	wanted = [],
+	loaded = {},
+	direction,
+	dept = 4
+) => {
+	const types = ['SAME', 'LOWER', 'HIGHER'];
+	if (!types.includes(direction)) {
+		return;
+	}
+
+	if (level > gridConstants.levels) {
+		return;
+	}
+
+	switch (direction) {
+		case 'SAME':
+			const loadedForLevel = loaded[level];
+			const union = getUnionTiles(loadedForLevel, wanted);
+			if (union.length > 0) {
+				return {
+					[level]: getUnionTiles(loadedForLevel, wanted),
+				};
+			} else {
+				return null;
+			}
+		case 'LOWER':
+			return getLoadedTilesByDirection(level, wanted, loaded, direction, dept);
+		case 'HIGHER':
+			return getLoadedTilesByDirection(level, wanted, loaded, direction, dept);
+		default:
+			break;
 	}
 };

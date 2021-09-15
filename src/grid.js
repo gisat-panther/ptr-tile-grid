@@ -14,6 +14,7 @@ import {
 	safeSubtraction,
 	roundCoordinate,
 	roundPoint,
+	tileAsArray,
 } from './utils';
 
 const tileCache = createCache();
@@ -52,8 +53,13 @@ export const getGridForLevelAndExtent = (
 		const gridSize = getGridSizeForLevel(level);
 		let grid = [];
 
-		const leftBottomTile = intersectTile(extent[0], gridSize, fixIntegrity);
-		const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity);
+		const leftBottomTile = intersectTile(
+			extent[0],
+			gridSize,
+			fixIntegrity,
+			false
+		);
+		const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity, true);
 		for (
 			let tileLat = leftBottomTile[1];
 			tileLat <= rightTopTile[1];
@@ -126,12 +132,17 @@ export const forEachTileInGridByLevelAndExtent = (
 
 	const gridSize = getGridSizeForLevel(level);
 
-	const leftBottomTile = intersectTile(extent[0], gridSize, fixIntegrity);
-	const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity);
+	const leftBottomTile = intersectTile(
+		extent[0],
+		gridSize,
+		fixIntegrity,
+		false
+	);
+	const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity, true);
 	for (
 		let tileLat = leftBottomTile[1];
 		tileLat <= rightTopTile[1];
-		tileLat = safeSumming(tileLat, gridSize)
+		tileLat = roundCoordinate(safeSumming(tileLat, gridSize))
 	) {
 		const crossMeridian =
 			safeSubtraction(rightTopTile[0], leftBottomTile[0]) <= -180;
@@ -140,7 +151,7 @@ export const forEachTileInGridByLevelAndExtent = (
 			for (
 				let tileLon = leftBottomTile[0];
 				safeSumming(tileLon, gridSize) <= 180;
-				tileLon = safeSumming(tileLon, gridSize)
+				tileLon = roundCoordinate(safeSumming(tileLon, gridSize))
 			) {
 				callback(roundPoint([tileLon, tileLat]));
 			}
@@ -148,7 +159,7 @@ export const forEachTileInGridByLevelAndExtent = (
 			for (
 				let tileLon = -180;
 				tileLon <= rightTopTile[0];
-				tileLon = safeSumming(tileLon, gridSize)
+				tileLon = roundCoordinate(safeSumming(tileLon, gridSize))
 			) {
 				callback(roundPoint([tileLon, tileLat]));
 			}
@@ -156,7 +167,7 @@ export const forEachTileInGridByLevelAndExtent = (
 			for (
 				let tileLon = leftBottomTile[0];
 				tileLon <= rightTopTile[0];
-				tileLon = safeSumming(tileLon, gridSize)
+				tileLon = roundCoordinate(safeSumming(tileLon, gridSize))
 			) {
 				callback(roundPoint([tileLon, tileLat]));
 			}
@@ -188,9 +199,13 @@ export const getTilesCountForGridByLevelAndExtent = (
 	}
 
 	const gridSize = getGridSizeForLevel(level);
-
-	const leftBottomTile = intersectTile(extent[0], gridSize, fixIntegrity);
-	const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity);
+	const leftBottomTile = intersectTile(
+		extent[0],
+		gridSize,
+		fixIntegrity,
+		false
+	);
+	const rightTopTile = intersectTile(extent[1], gridSize, fixIntegrity, true);
 	// Floor and round is important for getting integer in big zooms.
 	const numberOfRows = Math.floor(
 		Math.round(safeSubtraction(rightTopTile[1], leftBottomTile[1]) / gridSize) +
@@ -333,7 +348,7 @@ export const getChildTiles = (level, tile) => {
 		const childLevel = level + 1;
 		const tileSizeOfChild = getGridSizeForLevel(childLevel);
 		const shift = tileSizeOfChild / 4;
-		const centerOfTile = getCenterOfTile(level, tile);
+		const centerOfTile = getCenterOfTile(level, tileAsArray(tile));
 		const topLeftTile = intersectTile(
 			[centerOfTile.lon - shift, centerOfTile.lat + shift],
 			tileSizeOfChild

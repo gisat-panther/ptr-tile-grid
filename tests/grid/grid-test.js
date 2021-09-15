@@ -109,12 +109,7 @@ describe('grid/grid', function () {
 
 			assert.deepEqual(grid0, [[[-180, -90]]]);
 
-			assert.deepEqual(grid1, [
-				[
-					[-180, -90],
-					[0, -90],
-				],
-			]);
+			assert.deepEqual(grid1, [[[-180, -90]]]);
 
 			assert.deepEqual(grid2, [
 				[
@@ -169,7 +164,7 @@ describe('grid/grid', function () {
 					count++;
 				}
 			);
-			assert.equal(count, 266450); //number of tiles
+			assert.equal(count, 266085); //number of tiles
 		});
 
 		it('Run callback on each tile on grid for given level and extent for France and level 17', function () {
@@ -185,7 +180,7 @@ describe('grid/grid', function () {
 					count++;
 				}
 			);
-			assert.equal(count, 1062153); //number of tiles
+			assert.equal(count, 1062882); //number of tiles
 		});
 	});
 

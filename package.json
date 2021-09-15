@@ -26,7 +26,8 @@
 	},
 	"dependencies": {
 		"@gisatcz/ptr-core": "^1.3.10",
-		"@gisatcz/ptr-utils": "^1.3.11"
+		"@gisatcz/ptr-utils": "^1.3.11",
+		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.12.16",
