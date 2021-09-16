@@ -781,9 +781,8 @@ export const getLoadedTilesByDirection = (
 		});
 		if (loaded[nextLevel]) {
 			for (let i = missingTilesInLevels[nextLevel].length - 1; i >= 0; i--) {
-				const [missingTopTile, missingTilesForLevel] = missingTilesInLevels[
-					nextLevel
-				][i];
+				const [missingTopTile, missingTilesForLevel] =
+					missingTilesInLevels[nextLevel][i];
 				if (loaded[nextLevel].length >= missingTilesForLevel.length) {
 					// get same tiles from loaded and requested
 					const intersectionForLevel = getTilesIntersection(
