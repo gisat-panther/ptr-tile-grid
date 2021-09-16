@@ -1,3 +1,15 @@
+# v0.0.11 (Thu Sep 16 2021)
+
+#### 🐾 Patch
+
+- - Migrate tile utils from ptr-state [#30](https://github.com/gisat-panther/ptr-tile-grid/pull/30) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v0.0.10 (Tue Jul 27 2021)
 
 #### 🐾 Patch
