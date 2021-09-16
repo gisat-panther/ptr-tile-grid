@@ -23,8 +23,15 @@ describe('utils/getLoadedTiles', function () {
 				[0, -45],
 			],
 		};
-		const unionOfLoaded = utils.getLoadedTiles(level, wanted, loaded, 'SAME');
-		assert.deepEqual(unionOfLoaded, {2: ['-45,0', '0,0', '-45,-45', '0,-45']});
+		const intersectionOfLoaded = utils.getLoadedTiles(
+			level,
+			wanted,
+			loaded,
+			'SAME'
+		);
+		assert.deepEqual(intersectionOfLoaded, {
+			2: ['-45,0', '0,0', '-45,-45', '0,-45'],
+		});
 	});
 
 	it('Identify already loaded tiles on same level _2.', function () {
@@ -40,9 +47,14 @@ describe('utils/getLoadedTiles', function () {
 			[-90, -45],
 		];
 		const loaded = {2: []};
-		const unionOfLoaded = utils.getLoadedTiles(level, wanted, loaded, 'SAME');
+		const intersectionOfLoaded = utils.getLoadedTiles(
+			level,
+			wanted,
+			loaded,
+			'SAME'
+		);
 
-		assert.deepEqual(unionOfLoaded, null);
+		assert.deepEqual(intersectionOfLoaded, null);
 	});
 
 	it('Identify already loaded tiles on LOWER level _1.', function () {
@@ -58,7 +70,7 @@ describe('utils/getLoadedTiles', function () {
 			[-90, -45],
 		];
 		const loaded = {3: ['45,0', '67.5,0', '45,22.5', '67.5,22.5']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
@@ -66,7 +78,7 @@ describe('utils/getLoadedTiles', function () {
 			2
 		);
 
-		assert.deepEqual(unionOfLoaded, {
+		assert.deepEqual(intersectionOfLoaded, {
 			'45,0': {
 				level: 3,
 				tiles: ['45,0', '67.5,0', '45,22.5', '67.5,22.5'],
@@ -85,14 +97,14 @@ describe('utils/getLoadedTiles', function () {
 			[-90, -45],
 		];
 		const loaded = {3: ['45,0', '67.5,0', '45,22.5', '67.5,22.5']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'LOWER',
 			2
 		);
-		assert.deepEqual(unionOfLoaded, {});
+		assert.deepEqual(intersectionOfLoaded, {});
 	});
 
 	it('Identify already loaded tiles on LOWER level _3.', function () {
@@ -123,14 +135,14 @@ describe('utils/getLoadedTiles', function () {
 				'67.5,67.5',
 			],
 		};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'LOWER',
 			2
 		);
-		assert.deepEqual(unionOfLoaded, {
+		assert.deepEqual(intersectionOfLoaded, {
 			'0,0': {
 				level: 3,
 				tiles: [
@@ -164,70 +176,74 @@ describe('utils/getLoadedTiles', function () {
 			[0, -90],
 		];
 		const loaded = {25: ['0,0']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'LOWER',
 			4
 		);
-		assert.deepEqual(unionOfLoaded, {});
+		assert.deepEqual(intersectionOfLoaded, {});
 	});
 
 	it('Identify already loaded tiles on HIGHER level _0.', function () {
 		const level = 0;
 		const wanted = [[0, 0]];
 		const loaded = {25: ['0,0']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			4
 		);
-		assert.deepEqual(unionOfLoaded, {});
+		assert.deepEqual(intersectionOfLoaded, {});
 	});
 
 	it('Identify already loaded tiles on HIGHER level _1.', function () {
 		const level = 1;
 		const wanted = [[0, 0]];
 		const loaded = {0: ['0,-90']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			4
 		);
-		assert.deepEqual(unionOfLoaded, {'0,0': {level: 0, tiles: ['0,-90']}});
+		assert.deepEqual(intersectionOfLoaded, {
+			'0,0': {level: 0, tiles: ['0,-90']},
+		});
 	});
 
 	it('Identify already loaded tiles on HIGHER level _2.', function () {
 		const level = 1;
 		const wanted = [['0,0']];
 		const loaded = {0: ['0,-90']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			4
 		);
-		assert.deepEqual(unionOfLoaded, {'0,0': {level: 0, tiles: ['0,-90']}});
+		assert.deepEqual(intersectionOfLoaded, {
+			'0,0': {level: 0, tiles: ['0,-90']},
+		});
 	});
 
 	it('Identify already loaded tiles on HIGHER level _3.', function () {
 		const level = 1;
 		const wanted = [['0,0'], ['90,0'], ['-90,0']];
 		const loaded = {0: ['0,-90']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			4
 		);
-		assert.deepEqual(unionOfLoaded, {
+		assert.deepEqual(intersectionOfLoaded, {
 			'0,0': {level: 0, tiles: ['0,-90']},
 			'90,0': {level: 0, tiles: ['0,-90']},
 		});
@@ -237,14 +253,14 @@ describe('utils/getLoadedTiles', function () {
 		const level = 2;
 		const wanted = [['0,0'], ['45,0'], ['-45,0']];
 		const loaded = {0: ['0,-90'], 1: ['-90,0']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			4
 		);
-		assert.deepEqual(unionOfLoaded, {
+		assert.deepEqual(intersectionOfLoaded, {
 			'0,0': {level: 0, tiles: ['0,-90']},
 			'45,0': {level: 0, tiles: ['0,-90']},
 			'-45,0': {level: 1, tiles: ['-90,0']},
@@ -255,27 +271,27 @@ describe('utils/getLoadedTiles', function () {
 		const level = 25;
 		const wanted = [['0,0'], ['45,0'], ['-45,0']];
 		const loaded = {0: ['0,-90'], 1: ['-90,0']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			4
 		);
-		assert.deepEqual(unionOfLoaded, {});
+		assert.deepEqual(intersectionOfLoaded, {});
 	});
 	it('Identify already loaded tiles on HIGHER level _6.', function () {
 		const level = 25;
 		const wanted = [['0,0'], ['45,0'], ['-45,0']];
 		const loaded = {0: ['0,-90'], 1: ['-90,0']};
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			25
 		);
-		assert.deepEqual(unionOfLoaded, {
+		assert.deepEqual(intersectionOfLoaded, {
 			'0,0': {level: 0, tiles: ['0,-90']},
 			'45,0': {level: 0, tiles: ['0,-90']},
 			'-45,0': {level: 1, tiles: ['-90,0']},
@@ -288,14 +304,14 @@ describe('utils/getLoadedTiles', function () {
 		const wanted = [['0,0'], ['45,0'], ['-45,0']];
 		const loaded = {0: ['0,-90'], 1: ['-90,0']};
 		debugger;
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			25
 		);
-		assert.deepEqual(unionOfLoaded, undefined);
+		assert.deepEqual(intersectionOfLoaded, undefined);
 	});
 
 	it('Identify already loaded tiles on HIGHER level _8.', function () {
@@ -303,13 +319,15 @@ describe('utils/getLoadedTiles', function () {
 		const wanted = [['0,0'], ['45,0'], ['-45,0']];
 		const loaded = {0: ['0,-90'], 1: ['-90,0']};
 		debugger;
-		const unionOfLoaded = utils.getLoadedTiles(
+		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
 			loaded,
 			'HIGHER',
 			24
 		);
-		assert.deepEqual(unionOfLoaded, {'-45,0': {level: 1, tiles: ['-90,0']}});
+		assert.deepEqual(intersectionOfLoaded, {
+			'-45,0': {level: 1, tiles: ['-90,0']},
+		});
 	});
 });

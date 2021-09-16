@@ -703,7 +703,7 @@ export const tileAsString = tile => {
 	}
 };
 
-export const getUnionTiles = (tilesA = [], tilesB = []) => {
+export const getTilesIntersection = (tilesA = [], tilesB = []) => {
 	const tilesAlength = tilesA.length;
 	const tilesBlength = tilesB.length;
 	let smallerTiles, biggerTiles;
@@ -715,15 +715,15 @@ export const getUnionTiles = (tilesA = [], tilesB = []) => {
 		biggerTiles = new Set([...tilesA.map(tileAsString)]);
 	}
 
-	const unionTiles = [];
+	const tilesIntersection = [];
 
 	smallerTiles.forEach(t => {
 		if (biggerTiles.has(t)) {
-			unionTiles.push(t);
+			tilesIntersection.push(t);
 		}
 	});
 
-	return unionTiles;
+	return tilesIntersection;
 };
 
 export const getExtentOfTile = (level, tile) => {
@@ -786,12 +786,12 @@ export const getLoadedTilesByDirection = (
 				][i];
 				if (loaded[nextLevel].length >= missingTilesForLevel.length) {
 					// get same tiles from loaded and requested
-					const unionForLevel = getUnionTiles(
+					const intersectionForLevel = getTilesIntersection(
 						loaded[nextLevel],
 						missingTilesForLevel
 					);
-					// union tiles covers all tiles from missing tiles
-					if (unionForLevel.length === missingTilesForLevel.length) {
+					// intersection tiles covers all tiles from missing tiles
+					if (intersectionForLevel.length === missingTilesForLevel.length) {
 						// remove from missingTilesInLevels[nextLevel]
 						const index = missingTilesInLevels[nextLevel].findIndex(
 							pair => pair[0] === missingTopTile
@@ -842,10 +842,10 @@ export const getLoadedTiles = (
 	switch (direction) {
 		case 'SAME':
 			const loadedForLevel = loaded[level];
-			const union = getUnionTiles(loadedForLevel, wanted);
-			if (union.length > 0) {
+			const intersection = getTilesIntersection(loadedForLevel, wanted);
+			if (intersection.length > 0) {
 				return {
-					[level]: getUnionTiles(loadedForLevel, wanted),
+					[level]: getTilesIntersection(loadedForLevel, wanted),
 				};
 			} else {
 				return null;
