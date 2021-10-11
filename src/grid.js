@@ -1,4 +1,4 @@
-import {map as mapUtils, utils} from '@gisatcz/ptr-utils';
+import {map as mapUtils} from '@gisatcz/ptr-utils';
 import {mapConstants} from '@gisatcz/ptr-core';
 
 import gridConstants from './constants/grid';

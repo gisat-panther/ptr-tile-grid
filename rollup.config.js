@@ -16,13 +16,16 @@ Object.assign(Paths, {
 	OUTPUT: Paths.DIST + '/index.js',
 });
 
-const lodashExternal = [
-	// 'lodash/isEmpty',
-];
+const lodashExternal = ['lodash/isArray', 'lodash/isFinite', 'lodash/without'];
 
 export default {
 	input: 'src/index.js',
-	external: [...lodashExternal, '@gisatcz/ptr-utils', '@gisatcz/ptr-core'],
+	external: [
+		...lodashExternal,
+		'@gisatcz/ptr-utils',
+		'@gisatcz/ptr-core',
+		/@babel\/runtime/,
+	],
 	output: {
 		file: {
 			es: pkg.module,
@@ -37,7 +40,8 @@ export default {
 	},
 	plugins: [
 		babel({
-			// plugins: ["lodash"],
+			plugins: ['lodash'],
+			babelHelpers: 'runtime',
 		}),
 		commonjs({
 			include: 'node_modules/**',
