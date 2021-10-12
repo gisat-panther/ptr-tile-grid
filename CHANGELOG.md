@@ -1,3 +1,15 @@
+# v0.1.1 (Tue Oct 12 2021)
+
+#### 🐾 Patch
+
+- Update package.json [#33](https://github.com/gisat-panther/ptr-tile-grid/pull/33) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v0.1.0 (Mon Oct 11 2021)
 
 #### 🚀 Enhancement
