@@ -1,7 +1,7 @@
 {
 	"name": "@gisatcz/ptr-tile-grid",
 	"version": "0.1.0",
-	"description": "Panther globe tile set",
+	"description": "Panther globe tile set in WGS84.",
 	"keywords": [
 		"panther",
 		"gisat"
