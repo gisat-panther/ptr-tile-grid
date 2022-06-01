@@ -1,6 +1,6 @@
 {
 	"name": "@gisatcz/ptr-tile-grid",
-	"version": "0.1.2-0",
+	"version": "0.1.2-1",
 	"description": "Panther globe tile set in WGS84.",
 	"sideEffects": false,
 	"keywords": [
