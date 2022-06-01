@@ -1,3 +1,4 @@
+import {describe, it} from 'mocha';
 import {assert} from 'chai';
 
 import {grid} from '../../src/';
@@ -144,7 +145,7 @@ describe('grid/grid', function () {
 					[-1, 41],
 					[1, 42],
 				],
-				(tile, tileSize) => {
+				() => {
 					count++;
 				}
 			);
@@ -160,7 +161,7 @@ describe('grid/grid', function () {
 					[-1, 41],
 					[1, 42],
 				],
-				(tile, tileSize) => {
+				() => {
 					count++;
 				}
 			);
@@ -176,7 +177,7 @@ describe('grid/grid', function () {
 					[-1, 41],
 					[1, 42],
 				],
-				(tile, tileSize) => {
+				() => {
 					count++;
 				}
 			);

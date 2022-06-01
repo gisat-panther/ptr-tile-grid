@@ -1,5 +1,6 @@
+import {describe, it} from 'mocha';
 import {assert} from 'chai';
-import {utils, constants} from '../../src/';
+import {utils} from '../../src/';
 
 describe('utils/utils', function () {
 	describe('intersectTile', function () {

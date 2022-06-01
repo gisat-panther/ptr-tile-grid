@@ -1,3 +1,5 @@
+/* eslint-disable no-loss-of-precision */
+import {describe, it} from 'mocha';
 import {assert} from 'chai';
 import {utils, constants} from '../../src/';
 
@@ -293,7 +295,7 @@ describe('utils/utils', function () {
 				],
 			];
 			let tilesCount = 0;
-			utils.forEachTile(tileSet, (tile, rowIndex, columnIndex) => {
+			utils.forEachTile(tileSet, () => {
 				++tilesCount;
 			});
 			assert.equal(tilesCount, 2);
