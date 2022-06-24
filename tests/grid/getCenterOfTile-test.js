@@ -1,3 +1,4 @@
+import {describe, it} from 'mocha';
 import {getCenterOfTile} from '../../src/grid';
 import {assert} from 'chai';
 

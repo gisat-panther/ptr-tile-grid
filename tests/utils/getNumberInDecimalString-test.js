@@ -1,3 +1,5 @@
+/* eslint-disable no-loss-of-precision */
+import {describe, it} from 'mocha';
 import {assert} from 'chai';
 import {utils} from '../../src/';
 
@@ -12,7 +14,7 @@ describe('utils/getNumberInDecimalString', function () {
 			'-359.1111111111111'
 		);
 		assert.strictEqual(
-			utils.getNumberInDecimalString(-359.11111111111111),
+			utils.getNumberInDecimalString(-359.1111111111111),
 			'-359.1111111111111'
 		);
 		assert.strictEqual(

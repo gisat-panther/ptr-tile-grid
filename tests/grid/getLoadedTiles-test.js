@@ -1,3 +1,4 @@
+import {describe, it} from 'mocha';
 import {assert} from 'chai';
 
 import {utils} from '../../src/';
@@ -303,7 +304,6 @@ describe('utils/getLoadedTiles', function () {
 		const level = 26;
 		const wanted = [['0,0'], ['45,0'], ['-45,0']];
 		const loaded = {0: ['0,-90'], 1: ['-90,0']};
-		debugger;
 		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,
@@ -318,7 +318,6 @@ describe('utils/getLoadedTiles', function () {
 		const level = 25;
 		const wanted = [['0,0'], ['45,0'], ['-45,0']];
 		const loaded = {0: ['0,-90'], 1: ['-90,0']};
-		debugger;
 		const intersectionOfLoaded = utils.getLoadedTiles(
 			level,
 			wanted,

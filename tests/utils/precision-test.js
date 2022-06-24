@@ -1,3 +1,5 @@
+/* eslint-disable no-loss-of-precision */
+import {describe, it} from 'mocha';
 import {assert} from 'chai';
 import {utils} from '../../src/';
 

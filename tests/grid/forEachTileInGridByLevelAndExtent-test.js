@@ -1,3 +1,4 @@
+import {describe, it} from 'mocha';
 import {forEachTileInGridByLevelAndExtent} from '../../src/grid';
 import {assert} from 'chai';
 
@@ -9,7 +10,7 @@ describe('forEachTileInGridByLevelAndExtent', function () {
 			[0, 90],
 		];
 		let tilesCount = 0;
-		forEachTileInGridByLevelAndExtent(level, extent, t => {
+		forEachTileInGridByLevelAndExtent(level, extent, () => {
 			++tilesCount;
 		});
 
@@ -23,7 +24,7 @@ describe('forEachTileInGridByLevelAndExtent', function () {
 			[-89.99998927116394, -89.99998927116394],
 		];
 		let tilesCount = 0;
-		forEachTileInGridByLevelAndExtent(level, extent, t => {
+		forEachTileInGridByLevelAndExtent(level, extent, () => {
 			++tilesCount;
 		});
 

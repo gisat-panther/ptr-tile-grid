@@ -839,7 +839,7 @@ export const getLoadedTiles = (
 	}
 
 	switch (direction) {
-		case 'SAME':
+		case 'SAME': {
 			const loadedForLevel = loaded[level];
 			const intersection = getTilesIntersection(loadedForLevel, wanted);
 			if (intersection.length > 0) {
@@ -849,6 +849,7 @@ export const getLoadedTiles = (
 			} else {
 				return null;
 			}
+		}
 		case 'LOWER':
 			return getLoadedTilesByDirection(level, wanted, loaded, direction, dept);
 		case 'HIGHER':

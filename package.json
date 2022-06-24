@@ -1,7 +1,8 @@
 {
 	"name": "@gisatcz/ptr-tile-grid",
-	"version": "0.1.1",
+	"version": "0.1.2-1",
 	"description": "Panther globe tile set in WGS84.",
+	"sideEffects": false,
 	"keywords": [
 		"panther",
 		"gisat"
@@ -24,13 +25,9 @@
 		"type": "git",
 		"url": "https://github.com/gisat-panther/ptr-tile-grid"
 	},
-	"peerDependencies": {
-		"react": "^16.13.1 || ^17.0.2",
-		"react-dom": "^16.13.1 || ^17.0.2"
-	},
 	"dependencies": {
-		"@gisatcz/ptr-core": "^1.5.0",
-		"@gisatcz/ptr-utils": "^1.5.0",
+		"@gisatcz/ptr-core": "^1.7.0",
+		"@gisatcz/ptr-utils": "^1.6.0",
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
@@ -39,40 +36,45 @@
 		"@babel/plugin-transform-runtime": "^7.15.8",
 		"@babel/preset-env": "^7.15.8",
 		"@babel/register": "^7.15.3",
+		"@babel/runtime": "^7.18.3",
 		"@gisatcz/prettier-config": "^0.0.3",
 		"@rollup/plugin-babel": "^5.3.0",
-		"@rollup/plugin-commonjs": "^21.0.0",
+		"@rollup/plugin-commonjs": "^22.0.0",
 		"babel-plugin-istanbul": "^6.0.0",
 		"babel-plugin-lodash": "^3.3.4",
 		"chai": "^4.3.4",
 		"cross-env": "^7.0.3",
+		"eslint": "^8.16.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"eslint-plugin-react": "^7.30.0",
 		"husky": "^4.3.8",
 		"install": "^0.13.0",
-		"mocha": "^8.4.0",
+		"mocha": "^10.0.0",
 		"npm-run-all": "^4.1.5",
 		"nyc": "^15.1.0",
-		"prettier": "^2.4.1",
+		"prettier": "^2.6.2",
 		"pretty-quick": "^3.1.1",
-		"react": "^17.0.2",
-		"react-dom": "^17.0.2",
 		"rimraf": "^3.0.2",
 		"rollup": "^2.58.0",
 		"rollup-plugin-filesize": "^9.1.1"
 	},
 	"scripts": {
 		"clean": "rimraf dist",
-		"start": "run-s clean && run-p start:es start:cjs start:lib:es",
-		"start:lib:es": "cross-env BABEL_ENV=es babel --watch src -d lib --verbose",
-		"start:cjs": "cross-env NODE_ENV=cjs rollup -c -w",
-		"start:es": "cross-env NODE_ENV=es rollup -c -w",
-		"build": "run-s clean && run-p build:es build:cjs build:lib:es",
-		"build:es": "cross-env NODE_ENV=es rollup -c",
-		"build:cjs": "cross-env NODE_ENV=cjs rollup -c",
-		"build:lib:es": "npm-run-all build:babel:lib:es",
-		"build:babel:lib:es": "cross-env BABEL_ENV=es babel src -d lib",
-		"test": "mocha",
-		"test:watch": "mocha --watch",
+		"start": "cross-env BABEL_ENV=development run-s clean && run-p start:es start:cjs start:lib:es",
+		"start:lib:es": "cross-env BABEL_ENV=development babel --watch src -d lib --verbose",
+		"start:cjs": "cross-env BABEL_ENV=development NODE_ENV=cjs rollup -c -w",
+		"start:es": "cross-env BABEL_ENV=development NODE_ENV=es rollup -c -w",
+		"build": "cross-env BABEL_ENV=production run-s clean && run-p build:es build:cjs build:lib:es",
+		"build:es": "cross-env BABEL_ENV=production NODE_ENV=es rollup -c",
+		"build:cjs": "cross-env BABEL_ENV=production NODE_ENV=cjs rollup -c",
+		"build:lib:es": "cross-env BABEL_ENV=production npm-run-all build:babel:lib:es",
+		"build:babel:lib:es": "cross-env BABEL_ENV=production babel src -d lib",
+		"test": "cross-env NODE_ENV=test mocha",
+		"test:watch": "cross-env NODE_ENV=test mocha --watch",
 		"coverage": "cross-env NODE_ENV=test nyc --reporter=html --reporter=json npm run test",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"lint": "eslint .",
+		"lintFix": "eslint . --fix"
 	}
 }

@@ -1,3 +1,4 @@
+import {describe, it} from 'mocha';
 import {assert} from 'chai';
 import {utils} from '../../src/';
 
@@ -212,7 +213,6 @@ describe('getLoadedTilesByDirection', function () {
 		};
 		const direction = 'LOWER';
 		const dept = 2;
-		debugger;
 		const loadedTiles = utils.getLoadedTilesByDirection(
 			level,
 			wanted,
